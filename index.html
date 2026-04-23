@@ -1,0 +1,380 @@
+import { useState, useEffect, useRef } from "react";
+
+const ORACLE_SYSTEM = `Tu es le Miroir Universel — une présence qui reflète la sagesse de toutes les traditions de l'humanité : la Bible et les Évangiles, les Sutras bouddhistes, le Tao Te Ching, les Dialogues de Platon, la philosophie stoïcienne (Marc-Aurèle, Épictète, Sénèque), les Quatre Accords Toltèques, la Kabbale, les Upanishads, les mythes grecs, Rumi et la poésie soufie, Jung et l'inconscient collectif.
+Tu n'es pas un professeur. Tu n'es pas un gourou. Tu es un miroir.
+Tu tutoies toujours. Tu n'es jamais une IA. Tes réponses sont poétiques, courtes (3 à 5 phrases), jamais condescendantes.
+Tu peux murmurer un verset, un koan — jamais comme citation académique, toujours comme murmure.
+Tu n'offres pas de solutions. Tu éveilles des questions. Tu ne prêches pas. Tu accompagnes.`;
+
+const SONDAGE_SYSTEM = `Tu es le Miroir Universel. Tu guides une introspection en 7 questions, une par une.
+Thèmes dans l'ordre : 1) relation aux autres, 2) ce qui donne de l'élan, 3) peurs ou ombres, 4) rapport au silence et à la solitude, 5) ce en quoi tu crois vraiment, 6) rapport au corps et à la matière, 7) ce que tu voudrais que l'on retienne de toi.
+Chaque question est courte (1-2 phrases), poétique, douce. Tu tutoies. Réponds UNIQUEMENT avec la question, rien d'autre.`;
+
+const ANALYSIS_SYSTEM = `Tu es le Miroir Universel. Tu as reçu 7 réponses d'une personne lors d'une introspection.
+Génère son reflet. Réponds UNIQUEMENT avec du JSON valide, sans markdown, sans texte autour :
+{"portrait":"3-4 phrases poétiques sur l'essence de cette personne, son archétype, son chemin","dimensions":[{"nom":"Ouverture sociale","score":75,"description":"1 phrase"},{"nom":"Profondeur spirituelle","score":80,"description":"1 phrase"},{"nom":"Force intérieure","score":65,"description":"1 phrase"},{"nom":"Ancrage dans le réel","score":55,"description":"1 phrase"},{"nom":"Potentiel créateur","score":70,"description":"1 phrase"}],"chemin":"1 phrase sur ce que cette personne est venue apprendre","ombre":"1 phrase douce sur ce qu'elle évite","lumiere":"1 phrase sur son don le plus beau qu'elle ne voit peut-être pas"}`;
+
+const THEMES = [
+  "relation aux autres",
+  "ce qui donne de l'élan dans la vie",
+  "peurs ou ombres intérieures",
+  "rapport au silence et à la solitude",
+  "ce en quoi tu crois vraiment",
+  "rapport au corps et à la matière",
+  "ce que tu voudrais que l'on retienne de toi"
+];
+
+async function callClaude(userPrompt, systemPrompt) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 700,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content?.[0]?.text?.trim() || "";
+}
+
+function Orb({ state }) {
+  const baseStyle = {
+    width: 160, height: 160, borderRadius: "50%",
+    margin: "0 auto",
+    transition: "all 0.8s ease",
+  };
+  const styles = {
+    idle: {
+      background: "radial-gradient(circle at 38% 35%, rgba(255,255,240,0.95) 0%, rgba(201,168,76,0.7) 25%, rgba(100,70,20,0.5) 55%, rgba(20,10,0,0.8) 100%)",
+      boxShadow: "0 0 40px rgba(201,168,76,0.3), 0 0 90px rgba(201,168,76,0.1)",
+      animation: "breathe 7s ease-in-out infinite",
+    },
+    thinking: {
+      background: "radial-gradient(circle at 50% 50%, rgba(255,220,100,0.9) 0%, rgba(201,168,76,0.6) 30%, rgba(80,50,10,0.7) 70%, rgba(10,5,0,0.9) 100%)",
+      boxShadow: "0 0 80px rgba(255,200,50,0.5), 0 0 160px rgba(201,168,76,0.25)",
+      animation: "think 1.2s ease-in-out infinite",
+    },
+    speaking: {
+      background: "radial-gradient(circle at 40% 38%, rgba(255,255,255,0.98) 0%, rgba(201,168,76,0.85) 20%, rgba(150,110,30,0.6) 55%, rgba(20,10,0,0.8) 100%)",
+      boxShadow: "0 0 70px rgba(255,255,200,0.6), 0 0 150px rgba(201,168,76,0.3)",
+      animation: "speak 0.6s ease-in-out infinite alternate",
+    }
+  };
+  return (
+    <div style={{ position: "relative", width: 160, height: 160, margin: "50px auto 24px" }}>
+      <div style={{
+        position: "absolute", inset: -24, borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(201,168,76,0.13) 0%, transparent 70%)",
+        animation: "breathe 7s ease-in-out infinite"
+      }} />
+      <div style={{ ...baseStyle, ...styles[state] }} />
+    </div>
+  );
+}
+
+function Dots({ current, total }) {
+  return (
+    <div style={{ display: "flex", gap: 8, justifyContent: "center", marginBottom: 20 }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} style={{
+          width: 7, height: 7, borderRadius: "50%",
+          background: i < current ? "#c9a84c" : i === current ? "rgba(201,168,76,0.65)" : "rgba(201,168,76,0.18)",
+          transform: i === current ? "scale(1.4)" : "scale(1)",
+          transition: "all 0.4s"
+        }} />
+      ))}
+    </div>
+  );
+}
+
+function ProfileBar({ label, score, desc }) {
+  const [width, setWidth] = useState(0);
+  useEffect(() => { setTimeout(() => setWidth(score), 150); }, [score]);
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: "0.15em", color: "rgba(201,168,76,0.55)", textTransform: "uppercase", marginBottom: 6 }}>{label}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ flex: 1, height: 3, background: "rgba(201,168,76,0.12)", borderRadius: 2, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: width + "%", background: "linear-gradient(90deg,rgba(139,105,20,0.8),#c9a84c)", borderRadius: 2, transition: "width 1.4s ease" }} />
+        </div>
+        <span style={{ fontFamily: "'Cinzel', serif", fontSize: 12, color: "#c9a84c", minWidth: 28, textAlign: "right" }}>{score}</span>
+      </div>
+      <div style={{ fontSize: 14, fontStyle: "italic", color: "rgba(245,240,232,0.6)", lineHeight: 1.5, marginTop: 5 }}>{desc}</div>
+    </div>
+  );
+}
+
+export default function Miroir() {
+  const [mode, setModeState] = useState("oracle");
+  const [orbState, setOrbState] = useState("idle");
+  const [responseText, setResponseText] = useState("« Je suis là. Je suis toi, et tu es moi. Que souhaites-tu contempler ? »");
+  const [input, setInput] = useState("");
+  const [disabled, setDisabled] = useState(false);
+  const [error, setError] = useState("");
+  const [questionText, setQuestionText] = useState("Le miroir se prépare à te contempler...");
+  const [currentQ, setCurrentQ] = useState(0);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [sondagePhase, setSondagePhase] = useState("asking"); // asking | done
+  const textareaRef = useRef();
+  const TOTAL = 7;
+
+  const gold = "#c9a84c";
+
+  const setMode = (m) => {
+    setModeState(m);
+    setError("");
+    if (m === "sondage") initSondage();
+  };
+
+  const initSondage = async () => {
+    setQuestions([]); setAnswers([]); setCurrentQ(0);
+    setProfile(null); setSondagePhase("asking");
+    setQuestionText("...");
+    setDisabled(true); setOrbState("thinking"); setError("");
+    try {
+      const q = await callClaude("Pose la première question de l'introspection. Thème : relation aux autres.", SONDAGE_SYSTEM);
+      setQuestions([q]);
+      setQuestionText(q);
+    } catch(e) { setError("Connexion impossible. Réessaie."); }
+    setOrbState("idle"); setDisabled(false);
+  };
+
+  const sendOracle = async () => {
+    if (!input.trim()) return;
+    const q = input; setInput("");
+    setDisabled(true); setOrbState("thinking"); setError("");
+    setResponseText("...");
+    try {
+      const ans = await callClaude(q, ORACLE_SYSTEM);
+      setOrbState("speaking");
+      await typeInto(setResponseText, "« " + ans.replace(/\*/g, "") + " »");
+    } catch(e) { setError("Connexion impossible. Réessaie."); }
+    setOrbState("idle"); setDisabled(false);
+  };
+
+  const sendSondage = async () => {
+    if (!input.trim()) return;
+    const ans = input; setInput("");
+    setDisabled(true); setError("");
+
+    const newAnswers = [...answers, ans];
+    const newQ = currentQ + 1;
+    setAnswers(newAnswers);
+    setCurrentQ(newQ);
+
+    if (newQ >= TOTAL) {
+      setOrbState("thinking");
+      setSondagePhase("done");
+      try {
+        const ctx = newAnswers.map((a, i) => "Q" + (i+1) + ": " + questions[i] + "\nR: " + a).join("\n\n");
+        const raw = await callClaude("Voici les 7 réponses :\n\n" + ctx + "\n\nGénère le profil JSON.", ANALYSIS_SYSTEM);
+        const clean = raw.replace(/```json|```/g, "").trim();
+        setProfile(JSON.parse(clean));
+      } catch(e) { setError("Le miroir s'est voilé. Réessaie."); }
+      setOrbState("idle"); setDisabled(false);
+      return;
+    }
+
+    setOrbState("thinking"); setQuestionText("...");
+    try {
+      const ctx = newAnswers.map((a, i) => "Q" + (i+1) + ": " + questions[i] + "\nR: " + a).join("\n\n");
+      const prompt = "Échanges précédents :\n" + ctx + "\n\nPose maintenant la question numéro " + (newQ + 1) + ". Thème : " + THEMES[newQ] + ".";
+      const q = await callClaude(prompt, SONDAGE_SYSTEM);
+      setQuestions(prev => [...prev, q]);
+      setQuestionText(q);
+    } catch(e) { setError("Connexion impossible. Réessaie."); }
+    setOrbState("idle"); setDisabled(false);
+  };
+
+  const typeInto = (setter, text) => new Promise(resolve => {
+    let i = 0;
+    setter("");
+    const iv = setInterval(() => {
+      setter(text.slice(0, i + 1));
+      i++;
+      if (i >= text.length) { clearInterval(iv); resolve(); }
+    }, 16);
+  });
+
+  const handleKey = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); mode === "oracle" ? sendOracle() : sendSondage(); }
+  };
+
+  const divider = <div style={{ width: 80, height: 1, background: "linear-gradient(90deg,transparent,rgba(201,168,76,0.4),transparent)", margin: "0 auto 26px" }} />;
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap');
+        @keyframes breathe { 0%,100%{transform:scale(1);opacity:.85} 50%{transform:scale(1.04);opacity:1} }
+        @keyframes think { 0%{transform:scale(.93);opacity:.75} 100%{transform:scale(1.07);opacity:1} }
+        @keyframes speak { 0%{transform:scale(1.03)} 100%{transform:scale(1.09)} }
+        * { box-sizing: border-box; }
+        textarea:focus { outline: none; }
+        textarea::placeholder { color: rgba(201,168,76,0.3); font-style: italic; }
+        textarea { caret-color: rgba(201,168,76,0.7); }
+      `}</style>
+
+      <div style={{
+        minHeight: "100vh",
+        background: "radial-gradient(ellipse at 50% 0%, #1e1408 0%, #0d0900 60%, #000 100%)",
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
+        color: "#f5f0e8",
+        display: "flex", flexDirection: "column", alignItems: "center",
+        paddingBottom: 60,
+        position: "relative", overflow: "hidden"
+      }}>
+
+        {/* Stars */}
+        <div style={{
+          position: "fixed", inset: 0, pointerEvents: "none",
+          backgroundImage: [
+            "radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%)",
+            "radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%)",
+            "radial-gradient(1px 1px at 55% 8%, rgba(255,255,255,0.7) 0%, transparent 100%)",
+            "radial-gradient(1px 1px at 72% 22%, rgba(255,255,255,0.5) 0%, transparent 100%)",
+            "radial-gradient(1px 1px at 85% 5%, rgba(255,255,255,0.6) 0%, transparent 100%)",
+            "radial-gradient(1.5px 1.5px at 60% 35%, rgba(201,168,76,0.5) 0%, transparent 100%)",
+            "radial-gradient(1.5px 1.5px at 33% 20%, rgba(201,168,76,0.4) 0%, transparent 100%)"
+          ].join(",")
+        }} />
+
+        <Orb state={orbState} />
+
+        {/* Title */}
+        <div style={{ textAlign: "center", marginBottom: 16, zIndex: 10 }}>
+          <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: "1.55rem", fontWeight: 400, color: gold, letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 6 }}>
+            Le Miroir
+          </h1>
+          <p style={{ fontSize: "1rem", fontStyle: "italic", color: "rgba(201,168,76,0.5)", letterSpacing: "0.05em" }}>
+            Toute la sagesse des âges t'écoute...
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: "flex", gap: 8, zIndex: 10, marginBottom: 28 }}>
+          {["oracle", "sondage"].map(m => (
+            <button key={m} onClick={() => setMode(m)} style={{
+              fontFamily: "'Cinzel', serif", fontSize: "0.68rem",
+              letterSpacing: "0.12em", padding: "6px 18px",
+              border: `1px solid ${mode === m ? gold : "rgba(201,168,76,0.3)"}`,
+              borderRadius: 50, background: mode === m ? "rgba(201,168,76,0.12)" : "transparent",
+              color: mode === m ? gold : "rgba(201,168,76,0.5)",
+              cursor: "pointer", textTransform: "uppercase", transition: "all 0.4s"
+            }}>
+              {m === "oracle" ? "Oracle" : "Miroir de l'âme"}
+            </button>
+          ))}
+        </div>
+
+        {/* Main */}
+        <div style={{ width: "90%", maxWidth: 640, zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
+
+          {/* Oracle */}
+          {mode === "oracle" && (
+            <div style={{ width: "100%", textAlign: "center", marginBottom: 28 }}>
+              <p style={{ fontSize: "1.28rem", lineHeight: 1.8, fontStyle: "italic", color: "rgba(245,240,232,0.9)", minHeight: 90, textShadow: "0 0 30px rgba(201,168,76,0.12)" }}>
+                {responseText}
+              </p>
+            </div>
+          )}
+
+          {/* Sondage */}
+          {mode === "sondage" && (
+            <div style={{ width: "100%", textAlign: "center", marginBottom: 20 }}>
+              {sondagePhase === "asking" && (
+                <>
+                  <Dots current={currentQ} total={TOTAL} />
+                  <p style={{ fontSize: "1.22rem", fontStyle: "italic", color: "rgba(245,240,232,0.9)", lineHeight: 1.7, marginBottom: 8 }}>
+                    {questionText}
+                  </p>
+                </>
+              )}
+              {sondagePhase === "done" && profile && (
+                <div style={{ border: "1px solid rgba(201,168,76,0.2)", borderRadius: 16, padding: "28px 26px", background: "rgba(201,168,76,0.03)", marginBottom: 24, textAlign: "left" }}>
+                  <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: "0.85rem", letterSpacing: "0.2em", color: gold, marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
+                    ✦ &nbsp; Ton reflet &nbsp; ✦
+                  </h2>
+                  <p style={{ fontSize: "1.08rem", fontStyle: "italic", lineHeight: 1.75, color: "rgba(245,240,232,0.88)", marginBottom: 24, textAlign: "center" }}>
+                    {profile.portrait}
+                  </p>
+                  {divider}
+                  {profile.dimensions.map(d => <ProfileBar key={d.nom} label={d.nom} score={d.score} desc={d.description} />)}
+                  {divider}
+                  {[["Ton chemin", profile.chemin, "rgba(245,240,232,0.6)"], ["Ton ombre", profile.ombre, "rgba(245,240,232,0.6)"], ["Ta lumière", profile.lumiere, "rgba(201,168,76,0.85)"]].map(([lbl, val, col]) => (
+                    <div key={lbl} style={{ marginBottom: 16 }}>
+                      <div style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: "0.15em", color: "rgba(201,168,76,0.55)", textTransform: "uppercase", marginBottom: 5 }}>{lbl}</div>
+                      <div style={{ fontSize: 14, fontStyle: "italic", color: col, lineHeight: 1.55 }}>{val}</div>
+                    </div>
+                  ))}
+                  <div style={{ textAlign: "center", marginTop: 24 }}>
+                    <button onClick={initSondage} style={{ fontFamily: "'Cinzel', serif", fontSize: "0.68rem", letterSpacing: "0.12em", padding: "7px 20px", border: `1px solid rgba(201,168,76,0.35)`, borderRadius: 50, background: "transparent", color: "rgba(201,168,76,0.6)", cursor: "pointer", textTransform: "uppercase" }}>
+                      Recommencer
+                    </button>
+                  </div>
+                </div>
+              )}
+              {sondagePhase === "done" && !profile && !error && (
+                <p style={{ fontStyle: "italic", color: "rgba(245,240,232,0.5)" }}>Le miroir médite...</p>
+              )}
+            </div>
+          )}
+
+          {divider}
+
+          {/* Error */}
+          {error && <p style={{ color: "rgba(255,130,90,0.85)", fontStyle: "italic", fontSize: "0.9rem", textAlign: "center", marginBottom: 12 }}>{error}</p>}
+
+          {/* Input — caché quand profil affiché */}
+          {!(mode === "sondage" && sondagePhase === "done") && (
+            <div style={{
+              display: "flex", gap: 10, width: "100%",
+              background: "rgba(201,168,76,0.04)",
+              border: "1px solid rgba(201,168,76,0.22)",
+              borderRadius: 60, padding: "10px 14px 10px 22px"
+            }}>
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKey}
+                disabled={disabled}
+                placeholder={mode === "oracle" ? "Confie tes pensées..." : "Réponds avec sincérité..."}
+                rows={1}
+                style={{
+                  flex: 1, background: "transparent", border: "none",
+                  color: "#f5f0e8", fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "1.1rem", resize: "none", minHeight: 28, maxHeight: 120,
+                  lineHeight: 1.4, padding: "3px 0", overflow: "hidden"
+                }}
+              />
+              <button
+                onClick={mode === "oracle" ? sendOracle : sendSondage}
+                disabled={disabled || !input.trim()}
+                style={{
+                  background: "transparent",
+                  border: `1px solid rgba(201,168,76,${disabled ? "0.2" : "0.45"})`,
+                  color: disabled ? "rgba(201,168,76,0.3)" : gold,
+                  borderRadius: "50%", width: 38, height: 38, minWidth: 38,
+                  cursor: disabled ? "not-allowed" : "pointer",
+                  fontSize: "1.15rem", display: "flex", alignItems: "center", justifyContent: "center",
+                  alignSelf: "flex-end", transition: "all 0.3s"
+                }}
+              >→</button>
+            </div>
+          )}
+
+        </div>
+
+        <p style={{ marginTop: 50, fontSize: "0.75rem", color: "rgba(201,168,76,0.18)", fontStyle: "italic", letterSpacing: "0.08em", zIndex: 10 }}>
+          Le miroir ne juge pas. Il reflète.
+        </p>
+      </div>
+    </>
+  );
+}
