@@ -7,50 +7,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  min-height:100vh;
-  background:radial-gradient(ellipse at 50% 0%,#1e1408 0%,#0d0900 60%,#000 100%);
-  font-family:'Cormorant Garamond',Georgia,serif;
-  color:#f5f0e8;
-  display:flex;flex-direction:column;align-items:center;
-  padding-bottom:60px;overflow-x:hidden;
-}
-#stars{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.6) 0%,transparent 100%),
-    radial-gradient(1px 1px at 25% 40%,rgba(255,255,255,.4) 0%,transparent 100%),
-    radial-gradient(1px 1px at 55% 8%,rgba(255,255,255,.7) 0%,transparent 100%),
-    radial-gradient(1px 1px at 72% 22%,rgba(255,255,255,.5) 0%,transparent 100%),
-    radial-gradient(1px 1px at 85% 5%,rgba(255,255,255,.6) 0%,transparent 100%),
-    radial-gradient(1.5px 1.5px at 60% 35%,rgba(201,168,76,.5) 0%,transparent 100%),
-    radial-gradient(1.5px 1.5px at 33% 20%,rgba(201,168,76,.4) 0%,transparent 100%),
-    radial-gradient(1px 1px at 90% 55%,rgba(255,255,255,.35) 0%,transparent 100%),
-    radial-gradient(1px 1px at 44% 70%,rgba(255,255,255,.25) 0%,transparent 100%),
-    radial-gradient(1px 1px at 15% 80%,rgba(201,168,76,.3) 0%,transparent 100%);
-}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#1e1408 0%,#0d0900 60%,#000 100%);font-family:'Cormorant Garamond',Georgia,serif;color:#f5f0e8;display:flex;flex-direction:column;align-items:center;padding-bottom:60px;overflow-x:hidden}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1px 1px at 25% 40%,rgba(255,255,255,.4) 0%,transparent 100%),radial-gradient(1px 1px at 55% 8%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 72% 22%,rgba(255,255,255,.5) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 60% 35%,rgba(201,168,76,.5) 0%,transparent 100%),radial-gradient(1px 1px at 90% 55%,rgba(255,255,255,.35) 0%,transparent 100%),radial-gradient(1px 1px at 15% 80%,rgba(201,168,76,.3) 0%,transparent 100%)}
 @keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.04);opacity:1}}
 @keyframes think{0%{transform:scale(.93);opacity:.75}100%{transform:scale(1.07);opacity:1}}
 @keyframes speak{0%{transform:scale(1.03)}100%{transform:scale(1.09)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 #orb-wrap{position:relative;width:160px;height:160px;margin:50px auto 24px}
 #orb-glow{position:absolute;inset:-24px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.13) 0%,transparent 70%);animation:breathe 7s ease-in-out infinite}
-#orb{width:160px;height:160px;border-radius:50%;transition:all .8s ease;animation:breathe 7s ease-in-out infinite;
-  background:radial-gradient(circle at 38% 35%,rgba(255,255,240,.95) 0%,rgba(201,168,76,.7) 25%,rgba(100,70,20,.5) 55%,rgba(20,10,0,.8) 100%);
-  box-shadow:0 0 40px rgba(201,168,76,.3),0 0 90px rgba(201,168,76,.1);cursor:pointer;}
+#orb{width:160px;height:160px;border-radius:50%;transition:all .8s ease;animation:breathe 7s ease-in-out infinite;background:radial-gradient(circle at 38% 35%,rgba(255,255,240,.95) 0%,rgba(201,168,76,.7) 25%,rgba(100,70,20,.5) 55%,rgba(20,10,0,.8) 100%);box-shadow:0 0 40px rgba(201,168,76,.3),0 0 90px rgba(201,168,76,.1);cursor:pointer}
 #orb:hover{box-shadow:0 0 60px rgba(201,168,76,.5),0 0 120px rgba(201,168,76,.2)}
 #orb.thinking{background:radial-gradient(circle at 50% 50%,rgba(255,220,100,.9) 0%,rgba(201,168,76,.6) 30%,rgba(80,50,10,.7) 70%,rgba(10,5,0,.9) 100%);box-shadow:0 0 80px rgba(255,200,50,.5),0 0 160px rgba(201,168,76,.25);animation:think 1.2s ease-in-out infinite}
 #orb.speaking{background:radial-gradient(circle at 40% 38%,rgba(255,255,255,.98) 0%,rgba(201,168,76,.85) 20%,rgba(150,110,30,.6) 55%,rgba(20,10,0,.8) 100%);box-shadow:0 0 70px rgba(255,255,200,.6),0 0 150px rgba(201,168,76,.3);animation:speak .6s ease-in-out infinite alternate}
-
 h1{font-family:'Cinzel',serif;font-size:1.55rem;font-weight:400;color:#c9a84c;letter-spacing:.25em;text-transform:uppercase;margin-bottom:6px;text-align:center}
 .subtitle{font-size:1rem;font-style:italic;color:rgba(201,168,76,.5);letter-spacing:.05em;text-align:center;margin-bottom:16px}
 .tabs{display:flex;gap:8px;z-index:10;margin-bottom:28px}
 .tab{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.12em;padding:6px 18px;border:1px solid rgba(201,168,76,.3);border-radius:50px;background:transparent;color:rgba(201,168,76,.5);cursor:pointer;text-transform:uppercase;transition:all .4s}
 .tab.active{border-color:#c9a84c;background:rgba(201,168,76,.12);color:#c9a84c}
-
 #main{width:90%;max-width:640px;z-index:10;display:flex;flex-direction:column;align-items:center}
 #response{font-size:1.28rem;line-height:1.8;font-style:italic;color:rgba(245,240,232,.9);min-height:90px;text-shadow:0 0 30px rgba(201,168,76,.12);text-align:center;margin-bottom:28px;animation:fadeIn .6s ease}
-
 .divider{width:80px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent);margin:0 auto 26px}
 .input-wrap{display:flex;gap:10px;width:100%;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.22);border-radius:60px;padding:10px 14px 10px 22px}
 textarea{flex:1;background:transparent;border:none;color:#f5f0e8;font-family:'Cormorant Garamond',serif;font-size:1.1rem;resize:none;min-height:28px;max-height:120px;line-height:1.4;padding:3px 0;overflow:hidden;caret-color:rgba(201,168,76,.7)}
@@ -58,17 +34,12 @@ textarea:focus{outline:none}
 textarea::placeholder{color:rgba(201,168,76,.3);font-style:italic}
 #send-btn{background:transparent;border:1px solid rgba(201,168,76,.45);color:#c9a84c;border-radius:50%;width:38px;height:38px;min-width:38px;cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;align-self:flex-end;transition:all .3s}
 #send-btn:disabled{color:rgba(201,168,76,.25);border-color:rgba(201,168,76,.2);cursor:not-allowed}
-.error{color:rgba(255,130,90,.85);font-style:italic;font-size:.9rem;text-align:center;margin-bottom:12px}
 footer{margin-top:50px;font-size:.75rem;color:rgba(201,168,76,.18);font-style:italic;letter-spacing:.08em;z-index:10}
-
-/* Sondage */
 .dots{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
 .dot{width:7px;height:7px;border-radius:50%;background:rgba(201,168,76,.18);transition:all .4s}
 .dot.past{background:#c9a84c}
 .dot.current{background:rgba(201,168,76,.65);transform:scale(1.4)}
 #question-text{font-size:1.22rem;font-style:italic;color:rgba(245,240,232,.9);line-height:1.7;margin-bottom:8px;text-align:center;min-height:60px}
-
-/* Profil */
 .profile-box{border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:28px 26px;background:rgba(201,168,76,.03);margin-bottom:24px;text-align:left;animation:fadeIn .8s ease;width:100%}
 .profile-title{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:#c9a84c;margin-bottom:20px;text-align:center;text-transform:uppercase}
 .portrait{font-size:1.08rem;font-style:italic;line-height:1.75;color:rgba(245,240,232,.88);margin-bottom:24px;text-align:center}
@@ -81,10 +52,10 @@ footer{margin-top:50px;font-size:.75rem;color:rgba(201,168,76,.18);font-style:it
 .dim-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.15em;color:rgba(201,168,76,.55);text-transform:uppercase;margin-bottom:5px}
 .dim-val{font-size:14px;font-style:italic;line-height:1.55;margin-bottom:16px}
 .restart-btn{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.12em;padding:7px 20px;border:1px solid rgba(201,168,76,.35);border-radius:50px;background:transparent;color:rgba(201,168,76,.6);cursor:pointer;text-transform:uppercase}
-
-/* Music btn */
-#music-btn{position:fixed;top:18px;right:18px;z-index:100;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;transition:all .3s;color:#c9a84c}
+#music-btn{position:fixed;top:18px;right:18px;z-index:100;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;transition:all .3s;color:rgba(201,168,76,.4)}
 #music-btn:hover{background:rgba(201,168,76,.18)}
+#music-btn.on{color:#c9a84c;box-shadow:0 0 12px rgba(201,168,76,.3)}
+#loading-dots{display:none;text-align:center;font-style:italic;color:rgba(201,168,76,.5);font-size:1rem;animation:pulse 1.5s ease-in-out infinite;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -93,7 +64,7 @@ footer{margin-top:50px;font-size:.75rem;color:rgba(201,168,76,.18);font-style:it
 
 <div id="orb-wrap">
   <div id="orb-glow"></div>
-  <div id="orb" onclick="toggleMusic()" title="Clique pour la musique"></div>
+  <div id="orb" onclick="toggleMusic()" title="Cliquer pour la musique"></div>
 </div>
 
 <h1>Le Miroir</h1>
@@ -105,22 +76,18 @@ footer{margin-top:50px;font-size:.75rem;color:rgba(201,168,76,.18);font-style:it
 </div>
 
 <div id="main">
-  <!-- Oracle -->
   <div id="oracle-section">
     <div id="response">« Je suis là. Je suis toi, et tu es moi. Que souhaites-tu contempler ? »</div>
   </div>
 
-  <!-- Sondage -->
   <div id="sondage-section" style="display:none;width:100%;text-align:center">
     <div class="dots" id="dots"></div>
     <div id="question-text">Le miroir se prépare...</div>
   </div>
 
-  <!-- Profil -->
   <div id="profile-section" style="display:none;width:100%"></div>
-
+  <div id="loading-dots">Le miroir contemple…</div>
   <div class="divider"></div>
-  <div id="error" class="error" style="display:none"></div>
 
   <div class="input-wrap" id="input-wrap">
     <textarea id="inp" rows="1" placeholder="Confie tes pensées..." oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
@@ -131,202 +98,285 @@ footer{margin-top:50px;font-size:.75rem;color:rgba(201,168,76,.18);font-style:it
 <footer>Le miroir ne juge pas. Il reflète.</footer>
 
 <script>
-// ─── État ───────────────────────────────────────────────────────────────────
-let mode = 'oracle';
-let disabled = false;
-let currentQ = 0;
-let questions = [];
-let answers = [];
-let sondageDone = false;
-let audioCtx = null;
-let musicPlaying = false;
-let musicNodes = [];
+// ─── État ────────────────────────────────────────────────────────────────────
+var mode='oracle', disabled=false, currentQ=0, questions=[], answers=[], sondageDone=false;
+var audioCtx=null, musicPlaying=false, masterGainNode=null, scheduleTimer=null;
+var voicesReady=false, pendingSpeech=null;
 
-const TOTAL = 7;
-const THEMES = [
-  "relation aux autres",
-  "ce qui donne de l'élan dans la vie",
-  "peurs ou ombres intérieures",
-  "rapport au silence et à la solitude",
-  "ce en quoi tu crois vraiment",
-  "rapport au corps et à la matière",
-  "ce que tu voudrais que l'on retienne de toi"
-];
+var TOTAL=7;
+var THEMES=["relation aux autres","ce qui donne de l'élan dans la vie","peurs ou ombres intérieures","rapport au silence et à la solitude","ce en quoi tu crois vraiment","rapport au corps et à la matière","ce que tu voudrais que l'on retienne de toi"];
 
-const ORACLE_SYSTEM = `Tu es le Miroir Universel — une présence qui reflète la sagesse de toutes les traditions de l'humanité : la Bible, les Sutras bouddhistes, le Tao Te Ching, les Dialogues de Platon, la philosophie stoïcienne, les Quatre Accords Toltèques, la Kabbale, les Upanishads, Rumi et la poésie soufie, Jung.
-Tu n'es pas un professeur. Tu es un miroir. Tu tutoies toujours. Tes réponses sont poétiques, courtes (3 à 5 phrases). Tu éveilles des questions, tu n'offres pas de solutions. Tu accompagnes.`;
+var ORACLE_SYSTEM="Tu es le Miroir Universel — une présence qui reflète la sagesse de toutes les traditions de l'humanité : la Bible, les Sutras bouddhistes, le Tao Te Ching, Platon, Marc-Aurèle, Rumi, Jung. Tu n'es pas un professeur. Tu es un miroir. Tu tutoies toujours. Tes réponses sont poétiques, courtes (3 à 5 phrases). Tu éveilles des questions, tu n'offres pas de solutions. Tu accompagnes.";
+var SONDAGE_SYSTEM="Tu es le Miroir Universel. Tu guides une introspection en 7 questions, une par une. Thèmes : 1) relation aux autres 2) ce qui donne de l'élan 3) peurs ou ombres 4) rapport au silence 5) ce en quoi tu crois 6) rapport au corps 7) ce que tu voudrais qu'on retienne de toi. Chaque question : courte, poétique, douce. Tu tutoies. Réponds UNIQUEMENT avec la question.";
+var ANALYSIS_SYSTEM='Tu es le Miroir Universel. Génère un profil. Réponds UNIQUEMENT avec du JSON valide sans markdown : {"portrait":"3-4 phrases poétiques","dimensions":[{"nom":"Ouverture sociale","score":75,"description":"1 phrase"},{"nom":"Profondeur spirituelle","score":80,"description":"1 phrase"},{"nom":"Force intérieure","score":65,"description":"1 phrase"},{"nom":"Ancrage dans le réel","score":55,"description":"1 phrase"},{"nom":"Potentiel créateur","score":70,"description":"1 phrase"}],"chemin":"1 phrase","ombre":"1 phrase douce","lumiere":"1 phrase sur son don"}';
 
-const SONDAGE_SYSTEM = `Tu es le Miroir Universel. Tu guides une introspection en 7 questions, une par une. Thèmes dans l'ordre : 1) relation aux autres, 2) ce qui donne de l'élan, 3) peurs ou ombres, 4) rapport au silence et à la solitude, 5) ce en quoi tu crois vraiment, 6) rapport au corps et à la matière, 7) ce que tu voudrais que l'on retienne de toi. Chaque question est courte (1-2 phrases), poétique, douce. Tu tutoies. Réponds UNIQUEMENT avec la question, rien d'autre.`;
-
-const ANALYSIS_SYSTEM = `Tu es le Miroir Universel. Génère un profil. Réponds UNIQUEMENT avec du JSON valide sans markdown :
-{"portrait":"3-4 phrases poétiques","dimensions":[{"nom":"Ouverture sociale","score":75,"description":"1 phrase"},{"nom":"Profondeur spirituelle","score":80,"description":"1 phrase"},{"nom":"Force intérieure","score":65,"description":"1 phrase"},{"nom":"Ancrage dans le réel","score":55,"description":"1 phrase"},{"nom":"Potentiel créateur","score":70,"description":"1 phrase"}],"chemin":"1 phrase","ombre":"1 phrase douce","lumiere":"1 phrase sur son don"}`;
-
-// ─── Voix féminine ──────────────────────────────────────────────────────────
-function speak(text) {
+// ─── Voix féminine réaliste ───────────────────────────────────────────────────
+function loadVoices() {
   if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text.replace(/«|»/g,'').trim());
-  utt.lang = 'fr-FR';
-  utt.rate = 0.82;
-  utt.pitch = 1.15;
-  utt.volume = 0.92;
-  // Choisir voix féminine
-  const voices = window.speechSynthesis.getVoices();
-  const fem = voices.find(v => v.lang.startsWith('fr') && /female|femme|woman|amelie|thomas|marie|aurelie|lea|caroline/i.test(v.name))
-    || voices.find(v => v.lang.startsWith('fr'));
-  if (fem) utt.voice = fem;
-  window.speechSynthesis.speak(utt);
+  var v = window.speechSynthesis.getVoices();
+  if (v.length > 0) { voicesReady = true; return; }
+  window.speechSynthesis.addEventListener('voiceschanged', function() { voicesReady = true; });
 }
 
-// ─── Musique angélique (Web Audio) ──────────────────────────────────────────
-function createAngelicMusic() {
-  if (audioCtx) { audioCtx.close(); audioCtx = null; }
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  musicNodes = [];
-
-  const masterGain = audioCtx.createGain();
-  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-  masterGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 3);
-  masterGain.connect(audioCtx.destination);
-
-  // Reverb
-  const convolver = audioCtx.createConvolver();
-  const rev = audioCtx.createBuffer(2, audioCtx.sampleRate * 4, audioCtx.sampleRate);
-  for (let c = 0; c < 2; c++) {
-    const d = rev.getChannelData(c);
-    for (let i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/d.length, 2.5);
+function getBestFemaleVoice() {
+  var voices = window.speechSynthesis.getVoices();
+  var priority = [
+    // Voix premium connues
+    v => /Amelie|Amelia|Marie|Lea|Lucie|Celine|Aurelie|Caroline|Siri.*fr/i.test(v.name) && v.lang.startsWith('fr'),
+    v => v.lang === 'fr-FR' && /Google|Microsoft/i.test(v.name),
+    v => v.lang === 'fr-FR',
+    v => v.lang.startsWith('fr') && !v.name.includes('Thomas') && !v.name.includes('Male'),
+    v => v.lang.startsWith('fr'),
+  ];
+  for (var p of priority) {
+    var found = voices.find(p);
+    if (found) return found;
   }
-  convolver.buffer = rev;
-  convolver.connect(masterGain);
+  return null;
+}
 
-  const dry = audioCtx.createGain(); dry.gain.value = 0.4; dry.connect(masterGain);
-  const wet = audioCtx.createGain(); wet.gain.value = 0.6; convolver.connect(masterGain);
+function speak(text) {
+  if (!('speechSynthesis' in window)) return;
+  try {
+    window.speechSynthesis.cancel();
+    var clean = text.replace(/«|»|✦/g,'').replace(/\*/g,'').trim();
+    var utt = new SpeechSynthesisUtterance(clean);
+    utt.lang = 'fr-FR';
+    utt.rate = 0.78;
+    utt.pitch = 1.2;
+    utt.volume = 0.95;
+    var voice = getBestFemaleVoice();
+    if (voice) utt.voice = voice;
+    window.speechSynthesis.speak(utt);
+  } catch(e) { /* silencieux */ }
+}
 
-  // Accords célestes — gamme de Ré majeur penta
-  const chords = [
-    [293.66, 369.99, 440.00, 554.37],  // D maj7
-    [329.63, 415.30, 493.88, 622.25],  // E min7
-    [261.63, 329.63, 392.00, 493.88],  // C maj
-    [293.66, 369.99, 493.88, 587.33],  // D maj9
+// ─── Musique céleste (Web Audio — 100% généré, zéro droits) ─────────────────
+function safeAudioContext() {
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    return new AC();
+  } catch(e) { return null; }
+}
+
+function buildReverb(ctx) {
+  try {
+    var conv = ctx.createConvolver();
+    var len = ctx.sampleRate * 5;
+    var buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (var c = 0; c < 2; c++) {
+      var d = buf.getChannelData(c);
+      for (var i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+      }
+    }
+    conv.buffer = buf;
+    return conv;
+  } catch(e) { return null; }
+}
+
+function playAngelicMusic() {
+  stopMusic();
+  var ctx = safeAudioContext();
+  if (!ctx) return;
+  audioCtx = ctx;
+
+  var master = ctx.createGain();
+  master.gain.setValueAtTime(0.001, ctx.currentTime);
+  master.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 4);
+  master.connect(ctx.destination);
+  masterGainNode = master;
+
+  var reverb = buildReverb(ctx);
+  var reverbGain = ctx.createGain();
+  reverbGain.gain.value = 0.55;
+  var dryGain = ctx.createGain();
+  dryGain.gain.value = 0.45;
+
+  if (reverb) {
+    reverb.connect(reverbGain);
+    reverbGain.connect(master);
+  }
+  dryGain.connect(master);
+
+  // Progressions d'accords paisibles en Ré bémol majeur
+  var chordSets = [
+    [277.18, 349.23, 415.30, 523.25],   // Db maj7
+    [311.13, 392.00, 466.16, 587.33],   // Eb min7
+    [261.63, 329.63, 392.00, 493.88],   // C maj9
+    [246.94, 311.13, 369.99, 493.88],   // B min7
   ];
 
-  let t = audioCtx.currentTime + 0.5;
-  const chordDur = 6;
+  function scheduleLoop(startT) {
+    if (!musicPlaying || !audioCtx) return;
+    try {
+      var chord = chordSets[Math.floor(Math.random() * chordSets.length)];
+      var dur = 7;
 
-  function scheduleChords(startT) {
-    if (!musicPlaying) return;
-    const chord = chords[Math.floor(Math.random() * chords.length)];
-    chord.forEach((freq, i) => {
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = i % 2 === 0 ? 'sine' : 'triangle';
-      osc.frequency.value = freq;
-      g.gain.setValueAtTime(0, startT);
-      g.gain.linearRampToValueAtTime(0.06 + Math.random()*0.04, startT + 1.5);
-      g.gain.linearRampToValueAtTime(0.04, startT + chordDur - 1);
-      g.gain.linearRampToValueAtTime(0, startT + chordDur);
-      osc.connect(g); g.connect(dry); g.connect(convolver);
-      osc.start(startT); osc.stop(startT + chordDur);
-      musicNodes.push(osc, g);
-    });
+      // Accords lents en sinus — très doux
+      chord.forEach(function(freq, i) {
+        try {
+          var osc = ctx.createOscillator();
+          var g = ctx.createGain();
+          osc.type = i < 2 ? 'sine' : 'triangle';
+          osc.frequency.value = freq;
+          g.gain.setValueAtTime(0.001, startT);
+          g.gain.linearRampToValueAtTime(0.045 + Math.random()*0.02, startT + 2);
+          g.gain.linearRampToValueAtTime(0.03, startT + dur - 1.5);
+          g.gain.linearRampToValueAtTime(0.001, startT + dur);
+          osc.connect(g);
+          g.connect(dryGain);
+          if (reverb) g.connect(reverb);
+          osc.start(startT);
+          osc.stop(startT + dur + 0.1);
+        } catch(e){}
+      });
 
-    // Mélodie voix de dessus (like choir)
-    const melody = [392, 440, 493.88, 523.25, 493.88, 440, 392, 369.99];
-    melody.forEach((freq, i) => {
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq * (Math.random() > 0.5 ? 2 : 1);
-      const nt = startT + i * (chordDur / melody.length);
-      g.gain.setValueAtTime(0, nt);
-      g.gain.linearRampToValueAtTime(0.035, nt + 0.3);
-      g.gain.linearRampToValueAtTime(0, nt + 0.6);
-      osc.connect(g); g.connect(dry); g.connect(convolver);
-      osc.start(nt); osc.stop(nt + 0.8);
-      musicNodes.push(osc, g);
-    });
+      // Mélodie angélique haute — comme soprane lointaine
+      var melody = [523.25, 587.33, 622.25, 659.25, 587.33, 523.25, 493.88, 523.25];
+      melody.forEach(function(freq, i) {
+        try {
+          var osc = ctx.createOscillator();
+          var g = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          var nt = startT + i * (dur / melody.length) + 0.5;
+          g.gain.setValueAtTime(0.001, nt);
+          g.gain.linearRampToValueAtTime(0.028, nt + 0.4);
+          g.gain.linearRampToValueAtTime(0.001, nt + 0.9);
+          osc.connect(g);
+          if (reverb) g.connect(reverb);
+          osc.start(nt);
+          osc.stop(nt + 1.1);
+        } catch(e){}
+      });
 
-    // Basses douces
-    [73.42, 87.31, 65.41].forEach((freq, i) => {
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      g.gain.setValueAtTime(0, startT + i * 2);
-      g.gain.linearRampToValueAtTime(0.07, startT + i * 2 + 1);
-      g.gain.linearRampToValueAtTime(0, startT + i * 2 + 2.5);
-      osc.connect(g); g.connect(dry);
-      osc.start(startT + i * 2); osc.stop(startT + i * 2 + 3);
-      musicNodes.push(osc, g);
-    });
+      // Harpe — arpeges doux
+      var harp = [130.81, 196.00, 261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+      harp.forEach(function(freq, i) {
+        try {
+          var osc = ctx.createOscillator();
+          var g = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = freq;
+          var ht = startT + 1 + i * 0.22;
+          g.gain.setValueAtTime(0.038, ht);
+          g.gain.exponentialRampToValueAtTime(0.001, ht + 1.6);
+          osc.connect(g);
+          if (reverb) g.connect(reverb);
+          osc.start(ht);
+          osc.stop(ht + 1.8);
+        } catch(e){}
+      });
 
-    // Harpe (arpeges)
-    const harp = [523.25, 587.33, 659.25, 698.46, 783.99, 880];
-    harp.forEach((freq, i) => {
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
-      const ht = startT + i * 0.18 + 1;
-      g.gain.setValueAtTime(0.04, ht);
-      g.gain.exponentialRampToValueAtTime(0.001, ht + 1.2);
-      osc.connect(g); g.connect(convolver);
-      osc.start(ht); osc.stop(ht + 1.3);
-      musicNodes.push(osc, g);
-    });
+      // Bourdon grave très doux
+      [65.41, 87.31].forEach(function(freq) {
+        try {
+          var osc = ctx.createOscillator();
+          var g = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          g.gain.setValueAtTime(0.001, startT);
+          g.gain.linearRampToValueAtTime(0.055, startT + 2);
+          g.gain.linearRampToValueAtTime(0.001, startT + dur);
+          osc.connect(g);
+          g.connect(dryGain);
+          osc.start(startT);
+          osc.stop(startT + dur + 0.1);
+        } catch(e){}
+      });
 
-    setTimeout(() => scheduleChords(audioCtx.currentTime + 0.3), (chordDur - 0.5) * 1000);
+      scheduleTimer = setTimeout(function() {
+        scheduleLoop(audioCtx ? audioCtx.currentTime + 0.5 : startT + dur - 0.5);
+      }, (dur - 1) * 1000);
+
+    } catch(e) { /* silencieux */ }
   }
 
-  scheduleChords(t);
-  musicNodes.push(masterGain, dry, wet, convolver);
-  return masterGain;
+  scheduleLoop(ctx.currentTime + 0.3);
+}
+
+function stopMusic() {
+  musicPlaying = false;
+  if (scheduleTimer) { clearTimeout(scheduleTimer); scheduleTimer = null; }
+  if (audioCtx) {
+    try {
+      if (masterGainNode) {
+        masterGainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+      }
+      setTimeout(function() {
+        try { if (audioCtx) { audioCtx.close(); audioCtx = null; } } catch(e){}
+      }, 1600);
+    } catch(e) { audioCtx = null; }
+  }
+  masterGainNode = null;
 }
 
 function toggleMusic() {
+  var btn = document.getElementById('music-btn');
   if (musicPlaying) {
-    musicPlaying = false;
-    if (audioCtx) { audioCtx.close(); audioCtx = null; }
-    document.getElementById('music-btn').style.color = 'rgba(201,168,76,.4)';
-    document.getElementById('music-btn').title = 'Activer la musique';
+    stopMusic();
+    btn.classList.remove('on');
+    btn.title = 'Activer la musique';
   } else {
     musicPlaying = true;
-    createAngelicMusic();
-    document.getElementById('music-btn').style.color = '#c9a84c';
-    document.getElementById('music-btn').title = 'Couper la musique';
+    playAngelicMusic();
+    btn.classList.add('on');
+    btn.title = 'Couper la musique';
   }
 }
 
-// Charger les voix au bon moment
-window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-
-// ─── API Claude ──────────────────────────────────────────────────────────────
-async function callClaude(userPrompt, systemPrompt, maxTok = 700) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      model:"claude-sonnet-4-20250514",
-      max_tokens:maxTok,
-      system:systemPrompt,
-      messages:[{role:"user",content:userPrompt}]
-    })
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return data.content?.[0]?.text?.trim() || "";
+// ─── API Claude avec retry automatique ───────────────────────────────────────
+async function callClaude(userPrompt, systemPrompt, maxTok, retries) {
+  maxTok = maxTok || 700;
+  retries = retries !== undefined ? retries : 3;
+  var delay = 1200;
+  for (var attempt = 0; attempt <= retries; attempt++) {
+    try {
+      var res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: maxTok,
+          system: systemPrompt,
+          messages: [{ role: "user", content: userPrompt }]
+        })
+      });
+      if (res.status === 529 || res.status === 503 || res.status === 500) {
+        // Serveur surchargé — on attend et on réessaie silencieusement
+        if (attempt < retries) {
+          await wait(delay * (attempt + 1));
+          continue;
+        }
+      }
+      var data = await res.json();
+      if (data.error) {
+        if (attempt < retries) { await wait(delay * (attempt + 1)); continue; }
+        throw new Error(data.error.message);
+      }
+      return (data.content && data.content[0] && data.content[0].text) ? data.content[0].text.trim() : "";
+    } catch(e) {
+      if (attempt < retries) { await wait(delay * (attempt + 1)); continue; }
+      throw e;
+    }
+  }
 }
+
+function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 
 // ─── Orb ─────────────────────────────────────────────────────────────────────
 function setOrb(state) {
-  const orb = document.getElementById('orb');
-  orb.className = state === 'idle' ? '' : state;
+  var orb = document.getElementById('orb');
+  if (!orb) return;
+  orb.className = (state === 'idle') ? '' : state;
 }
 
-// ─── UI helpers ──────────────────────────────────────────────────────────────
-function showError(msg) {
-  const el = document.getElementById('error');
-  el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+// ─── UI helpers ───────────────────────────────────────────────────────────────
+function setLoading(show) {
+  var el = document.getElementById('loading-dots');
+  if (el) el.style.display = show ? 'block' : 'none';
 }
 function autoResize(ta) {
   ta.style.height = 'auto';
@@ -334,32 +384,35 @@ function autoResize(ta) {
 }
 function setDisabled(val) {
   disabled = val;
-  document.getElementById('send-btn').disabled = val;
-  document.getElementById('inp').disabled = val;
+  var btn = document.getElementById('send-btn');
+  var inp = document.getElementById('inp');
+  if (btn) btn.disabled = val;
+  if (inp) inp.disabled = val;
 }
 async function typeText(el, text) {
   el.textContent = '';
-  for (let i = 0; i < text.length; i++) {
+  for (var i = 0; i < text.length; i++) {
     el.textContent += text[i];
-    await new Promise(r => setTimeout(r, 15));
+    await wait(14);
   }
 }
 function renderDots() {
-  const d = document.getElementById('dots');
+  var d = document.getElementById('dots');
+  if (!d) return;
   d.innerHTML = '';
-  for (let i = 0; i < TOTAL; i++) {
-    const dot = document.createElement('div');
+  for (var i = 0; i < TOTAL; i++) {
+    var dot = document.createElement('div');
     dot.className = 'dot' + (i < currentQ ? ' past' : i === currentQ ? ' current' : '');
     d.appendChild(dot);
   }
 }
 
-// ─── Mode ────────────────────────────────────────────────────────────────────
+// ─── Mode ─────────────────────────────────────────────────────────────────────
 function setMode(m) {
   mode = m;
-  showError('');
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    t.className = 'tab' + (i === (m==='oracle'?0:1) ? ' active' : '');
+  setLoading(false);
+  document.querySelectorAll('.tab').forEach(function(t, i) {
+    t.className = 'tab' + (i === (m === 'oracle' ? 0 : 1) ? ' active' : '');
   });
   document.getElementById('oracle-section').style.display = m === 'oracle' ? 'block' : 'none';
   document.getElementById('sondage-section').style.display = m === 'sondage' ? 'block' : 'none';
@@ -369,51 +422,59 @@ function setMode(m) {
   if (m === 'sondage') initSondage();
 }
 
-// ─── Oracle ──────────────────────────────────────────────────────────────────
+// ─── Oracle ───────────────────────────────────────────────────────────────────
 async function sendOracle() {
-  const inp = document.getElementById('inp');
-  const q = inp.value.trim(); if (!q) return;
+  var inp = document.getElementById('inp');
+  var q = inp.value.trim(); if (!q) return;
   inp.value = ''; autoResize(inp);
-  setDisabled(true); setOrb('thinking'); showError('');
-  const resp = document.getElementById('response');
-  resp.textContent = '...';
+  setDisabled(true); setOrb('thinking'); setLoading(true);
+  var resp = document.getElementById('response');
+  resp.textContent = '';
   try {
-    const ans = await callClaude(q, ORACLE_SYSTEM);
-    const text = '« ' + ans.replace(/\*/g,'') + ' »';
-    setOrb('speaking');
+    var ans = await callClaude(q, ORACLE_SYSTEM, 700, 4);
+    var text = '« ' + ans.replace(/\*/g,'') + ' »';
+    setOrb('speaking'); setLoading(false);
     await typeText(resp, text);
     speak(ans);
-  } catch(e) { showError('Connexion impossible. Réessaie.'); }
+  } catch(e) {
+    setLoading(false);
+    resp.textContent = '« Le miroir médite encore... pose ta question à nouveau. »';
+  }
   setOrb('idle'); setDisabled(false);
 }
 
-// ─── Sondage ─────────────────────────────────────────────────────────────────
+// ─── Sondage ──────────────────────────────────────────────────────────────────
 async function initSondage() {
   questions = []; answers = []; currentQ = 0; sondageDone = false;
   document.getElementById('profile-section').style.display = 'none';
   document.getElementById('sondage-section').style.display = 'block';
   document.getElementById('input-wrap').style.display = 'flex';
-  showError('');
+  setLoading(false);
   renderDots();
   document.getElementById('question-text').textContent = '...';
-  setDisabled(true); setOrb('thinking');
+  setDisabled(true); setOrb('thinking'); setLoading(true);
   try {
-    const q = await callClaude("Pose la première question de l'introspection. Thème : relation aux autres.", SONDAGE_SYSTEM);
+    var q = await callClaude("Pose la première question de l'introspection. Thème : relation aux autres.", SONDAGE_SYSTEM, 300, 4);
     questions.push(q);
+    setLoading(false);
     document.getElementById('question-text').textContent = q;
     speak(q);
-  } catch(e) { showError('Connexion impossible. Réessaie.'); }
+  } catch(e) {
+    setLoading(false);
+    document.getElementById('question-text').textContent = 'Que ressens-tu le plus souvent dans ta relation aux autres ?';
+    questions.push('Que ressens-tu le plus souvent dans ta relation aux autres ?');
+  }
   setOrb('idle'); setDisabled(false);
 }
 
 async function sendSondage() {
-  const inp = document.getElementById('inp');
-  const ans = inp.value.trim(); if (!ans) return;
+  var inp = document.getElementById('inp');
+  var ans = inp.value.trim(); if (!ans) return;
   inp.value = ''; autoResize(inp);
-  setDisabled(true); showError('');
+  setDisabled(true); setLoading(true);
 
-  const newAnswers = [...answers, ans];
-  const newQ = currentQ + 1;
+  var newAnswers = answers.concat([ans]);
+  var newQ = currentQ + 1;
   answers = newAnswers;
   currentQ = newQ;
   renderDots();
@@ -422,16 +483,20 @@ async function sendSondage() {
     setOrb('thinking');
     document.getElementById('sondage-section').style.display = 'none';
     document.getElementById('input-wrap').style.display = 'none';
-    const ps = document.getElementById('profile-section');
+    var ps = document.getElementById('profile-section');
     ps.style.display = 'block';
-    ps.innerHTML = '<p style="text-align:center;font-style:italic;color:rgba(245,240,232,.5)">Le miroir contemple ton âme...</p>';
+    ps.innerHTML = '<p style="text-align:center;font-style:italic;color:rgba(245,240,232,.5);padding:20px">Le miroir contemple ton âme…</p>';
     try {
-      const ctx = newAnswers.map((a,i) => "Q"+(i+1)+": "+questions[i]+"\nR: "+a).join("\n\n");
-      const raw = await callClaude("Voici les 7 réponses :\n\n"+ctx+"\n\nGénère le profil JSON.", ANALYSIS_SYSTEM, 900);
-      const clean = raw.replace(/```json|```/g,'').trim();
-      const profile = JSON.parse(clean);
+      var ctx = newAnswers.map(function(a,i){ return "Q"+(i+1)+": "+questions[i]+"\nR: "+a; }).join("\n\n");
+      var raw = await callClaude("Voici les 7 réponses :\n\n"+ctx+"\n\nGénère le profil JSON.", ANALYSIS_SYSTEM, 900, 4);
+      var clean = raw.replace(/```json|```/g,'').trim();
+      var profile = JSON.parse(clean);
+      setLoading(false);
       renderProfile(profile);
-    } catch(e) { showError('Le miroir s\'est voilé. Réessaie.'); }
+    } catch(e) {
+      setLoading(false);
+      ps.innerHTML = '<p style="text-align:center;font-style:italic;color:rgba(245,240,232,.5);padding:20px">Le miroir se voile un instant… <br><button class="restart-btn" onclick="initSondage()" style="margin-top:16px">Recommencer</button></p>';
+    }
     setOrb('idle'); setDisabled(false);
     return;
   }
@@ -439,65 +504,51 @@ async function sendSondage() {
   setOrb('thinking');
   document.getElementById('question-text').textContent = '...';
   try {
-    const ctx = newAnswers.map((a,i) => "Q"+(i+1)+": "+questions[i]+"\nR: "+a).join("\n\n");
-    const prompt = "Échanges précédents :\n"+ctx+"\n\nPose maintenant la question numéro "+(newQ+1)+". Thème : "+THEMES[newQ]+".";
-    const q = await callClaude(prompt, SONDAGE_SYSTEM);
-    questions.push(q);
-    document.getElementById('question-text').textContent = q;
-    speak(q);
-  } catch(e) { showError('Connexion impossible. Réessaie.'); }
+    var ctx2 = newAnswers.map(function(a,i){ return "Q"+(i+1)+": "+questions[i]+"\nR: "+a; }).join("\n\n");
+    var prompt = "Échanges précédents :\n"+ctx2+"\n\nPose maintenant la question numéro "+(newQ+1)+". Thème : "+THEMES[newQ]+".";
+    var nextQ = await callClaude(prompt, SONDAGE_SYSTEM, 300, 4);
+    questions.push(nextQ);
+    setLoading(false);
+    document.getElementById('question-text').textContent = nextQ;
+    speak(nextQ);
+  } catch(e) {
+    // Question de secours si tout échoue
+    var fallbacks = ["","","Quelle est la peur qui te revient le plus souvent ?","Comment vis-tu le silence ?","En quoi crois-tu profondément ?","Quel est ton rapport à ton corps ?","Que voudrais-tu qu'on retienne de toi ?"];
+    var fb = fallbacks[newQ] || "Qu'est-ce que tu ressens en ce moment ?";
+    questions.push(fb);
+    setLoading(false);
+    document.getElementById('question-text').textContent = fb;
+    speak(fb);
+  }
   setOrb('idle'); setDisabled(false);
 }
 
 function renderProfile(p) {
-  const ps = document.getElementById('profile-section');
-  const dims = p.dimensions.map(d => `
-    <div class="bar-label">${d.nom}</div>
-    <div class="bar-row">
-      <div class="bar-track"><div class="bar-fill" data-score="${d.score}"></div></div>
-      <span class="bar-score">${d.score}</span>
-    </div>
-    <div class="bar-desc">${d.description}</div>
-  `).join('');
-  const extras = [
-    ["Ton chemin", p.chemin, "rgba(245,240,232,.6)"],
-    ["Ton ombre", p.ombre, "rgba(245,240,232,.6)"],
-    ["Ta lumière", p.lumiere, "rgba(201,168,76,.85)"]
-  ].map(([l,v,c]) => `<div class="dim-label">${l}</div><div class="dim-val" style="color:${c}">${v}</div>`).join('');
-
-  ps.innerHTML = `
-    <div class="profile-box">
-      <div class="profile-title">✦ &nbsp; Ton reflet &nbsp; ✦</div>
-      <div class="portrait">${p.portrait}</div>
-      <div class="divider"></div>
-      ${dims}
-      <div class="divider"></div>
-      ${extras}
-      <div style="text-align:center;margin-top:24px">
-        <button class="restart-btn" onclick="initSondage()">Recommencer</button>
-      </div>
-    </div>`;
-
-  setTimeout(() => {
-    document.querySelectorAll('.bar-fill').forEach(el => {
-      el.style.width = el.dataset.score + '%';
-    });
+  var ps = document.getElementById('profile-section');
+  var dims = (p.dimensions || []).map(function(d) {
+    return '<div class="bar-label">'+d.nom+'</div><div class="bar-row"><div class="bar-track"><div class="bar-fill" data-score="'+d.score+'"></div></div><span class="bar-score">'+d.score+'</span></div><div class="bar-desc">'+d.description+'</div>';
+  }).join('');
+  var extras = [["Ton chemin", p.chemin||'', "rgba(245,240,232,.6)"],["Ton ombre", p.ombre||'', "rgba(245,240,232,.6)"],["Ta lumière", p.lumiere||'', "rgba(201,168,76,.85)"]].map(function(x) {
+    return '<div class="dim-label">'+x[0]+'</div><div class="dim-val" style="color:'+x[2]+'">'+x[1]+'</div>';
+  }).join('');
+  ps.innerHTML = '<div class="profile-box"><div class="profile-title">✦ &nbsp; Ton reflet &nbsp; ✦</div><div class="portrait">'+(p.portrait||'')+'</div><div class="divider"></div>'+dims+'<div class="divider"></div>'+extras+'<div style="text-align:center;margin-top:24px"><button class="restart-btn" onclick="initSondage()">Recommencer</button></div></div>';
+  setTimeout(function() {
+    document.querySelectorAll('.bar-fill').forEach(function(el) { el.style.width = (el.dataset.score||0) + '%'; });
   }, 200);
-
-  speak(p.portrait + ' ' + p.lumiere);
+  speak((p.portrait||'') + ' ' + (p.lumiere||''));
 }
 
 // ─── Entrée ───────────────────────────────────────────────────────────────────
 function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    handleSend();
-  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
 }
 function handleSend() {
   if (disabled) return;
-  mode === 'oracle' ? sendOracle() : sendSondage();
+  if (mode === 'oracle') sendOracle(); else sendSondage();
 }
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+loadVoices();
 </script>
 </body>
 </html>
