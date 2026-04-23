@@ -1,19 +1,148 @@
-import { useState, useEffect, useRef } from "react";
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Le Miroir Universel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:radial-gradient(ellipse at 50% 0%,#1e1408 0%,#0d0900 60%,#000 100%);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  color:#f5f0e8;
+  display:flex;flex-direction:column;align-items:center;
+  padding-bottom:60px;overflow-x:hidden;
+}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 25% 40%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 55% 8%,rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 72% 22%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 5%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 60% 35%,rgba(201,168,76,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 33% 20%,rgba(201,168,76,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 90% 55%,rgba(255,255,255,.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 44% 70%,rgba(255,255,255,.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 15% 80%,rgba(201,168,76,.3) 0%,transparent 100%);
+}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.04);opacity:1}}
+@keyframes think{0%{transform:scale(.93);opacity:.75}100%{transform:scale(1.07);opacity:1}}
+@keyframes speak{0%{transform:scale(1.03)}100%{transform:scale(1.09)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-const ORACLE_SYSTEM = `Tu es le Miroir Universel — une présence qui reflète la sagesse de toutes les traditions de l'humanité : la Bible et les Évangiles, les Sutras bouddhistes, le Tao Te Ching, les Dialogues de Platon, la philosophie stoïcienne (Marc-Aurèle, Épictète, Sénèque), les Quatre Accords Toltèques, la Kabbale, les Upanishads, les mythes grecs, Rumi et la poésie soufie, Jung et l'inconscient collectif.
-Tu n'es pas un professeur. Tu n'es pas un gourou. Tu es un miroir.
-Tu tutoies toujours. Tu n'es jamais une IA. Tes réponses sont poétiques, courtes (3 à 5 phrases), jamais condescendantes.
-Tu peux murmurer un verset, un koan — jamais comme citation académique, toujours comme murmure.
-Tu n'offres pas de solutions. Tu éveilles des questions. Tu ne prêches pas. Tu accompagnes.`;
+#orb-wrap{position:relative;width:160px;height:160px;margin:50px auto 24px}
+#orb-glow{position:absolute;inset:-24px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.13) 0%,transparent 70%);animation:breathe 7s ease-in-out infinite}
+#orb{width:160px;height:160px;border-radius:50%;transition:all .8s ease;animation:breathe 7s ease-in-out infinite;
+  background:radial-gradient(circle at 38% 35%,rgba(255,255,240,.95) 0%,rgba(201,168,76,.7) 25%,rgba(100,70,20,.5) 55%,rgba(20,10,0,.8) 100%);
+  box-shadow:0 0 40px rgba(201,168,76,.3),0 0 90px rgba(201,168,76,.1);cursor:pointer;}
+#orb:hover{box-shadow:0 0 60px rgba(201,168,76,.5),0 0 120px rgba(201,168,76,.2)}
+#orb.thinking{background:radial-gradient(circle at 50% 50%,rgba(255,220,100,.9) 0%,rgba(201,168,76,.6) 30%,rgba(80,50,10,.7) 70%,rgba(10,5,0,.9) 100%);box-shadow:0 0 80px rgba(255,200,50,.5),0 0 160px rgba(201,168,76,.25);animation:think 1.2s ease-in-out infinite}
+#orb.speaking{background:radial-gradient(circle at 40% 38%,rgba(255,255,255,.98) 0%,rgba(201,168,76,.85) 20%,rgba(150,110,30,.6) 55%,rgba(20,10,0,.8) 100%);box-shadow:0 0 70px rgba(255,255,200,.6),0 0 150px rgba(201,168,76,.3);animation:speak .6s ease-in-out infinite alternate}
 
-const SONDAGE_SYSTEM = `Tu es le Miroir Universel. Tu guides une introspection en 7 questions, une par une.
-Thèmes dans l'ordre : 1) relation aux autres, 2) ce qui donne de l'élan, 3) peurs ou ombres, 4) rapport au silence et à la solitude, 5) ce en quoi tu crois vraiment, 6) rapport au corps et à la matière, 7) ce que tu voudrais que l'on retienne de toi.
-Chaque question est courte (1-2 phrases), poétique, douce. Tu tutoies. Réponds UNIQUEMENT avec la question, rien d'autre.`;
+h1{font-family:'Cinzel',serif;font-size:1.55rem;font-weight:400;color:#c9a84c;letter-spacing:.25em;text-transform:uppercase;margin-bottom:6px;text-align:center}
+.subtitle{font-size:1rem;font-style:italic;color:rgba(201,168,76,.5);letter-spacing:.05em;text-align:center;margin-bottom:16px}
+.tabs{display:flex;gap:8px;z-index:10;margin-bottom:28px}
+.tab{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.12em;padding:6px 18px;border:1px solid rgba(201,168,76,.3);border-radius:50px;background:transparent;color:rgba(201,168,76,.5);cursor:pointer;text-transform:uppercase;transition:all .4s}
+.tab.active{border-color:#c9a84c;background:rgba(201,168,76,.12);color:#c9a84c}
 
-const ANALYSIS_SYSTEM = `Tu es le Miroir Universel. Tu as reçu 7 réponses d'une personne lors d'une introspection.
-Génère son reflet. Réponds UNIQUEMENT avec du JSON valide, sans markdown, sans texte autour :
-{"portrait":"3-4 phrases poétiques sur l'essence de cette personne, son archétype, son chemin","dimensions":[{"nom":"Ouverture sociale","score":75,"description":"1 phrase"},{"nom":"Profondeur spirituelle","score":80,"description":"1 phrase"},{"nom":"Force intérieure","score":65,"description":"1 phrase"},{"nom":"Ancrage dans le réel","score":55,"description":"1 phrase"},{"nom":"Potentiel créateur","score":70,"description":"1 phrase"}],"chemin":"1 phrase sur ce que cette personne est venue apprendre","ombre":"1 phrase douce sur ce qu'elle évite","lumiere":"1 phrase sur son don le plus beau qu'elle ne voit peut-être pas"}`;
+#main{width:90%;max-width:640px;z-index:10;display:flex;flex-direction:column;align-items:center}
+#response{font-size:1.28rem;line-height:1.8;font-style:italic;color:rgba(245,240,232,.9);min-height:90px;text-shadow:0 0 30px rgba(201,168,76,.12);text-align:center;margin-bottom:28px;animation:fadeIn .6s ease}
 
+.divider{width:80px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.4),transparent);margin:0 auto 26px}
+.input-wrap{display:flex;gap:10px;width:100%;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.22);border-radius:60px;padding:10px 14px 10px 22px}
+textarea{flex:1;background:transparent;border:none;color:#f5f0e8;font-family:'Cormorant Garamond',serif;font-size:1.1rem;resize:none;min-height:28px;max-height:120px;line-height:1.4;padding:3px 0;overflow:hidden;caret-color:rgba(201,168,76,.7)}
+textarea:focus{outline:none}
+textarea::placeholder{color:rgba(201,168,76,.3);font-style:italic}
+#send-btn{background:transparent;border:1px solid rgba(201,168,76,.45);color:#c9a84c;border-radius:50%;width:38px;height:38px;min-width:38px;cursor:pointer;font-size:1.15rem;display:flex;align-items:center;justify-content:center;align-self:flex-end;transition:all .3s}
+#send-btn:disabled{color:rgba(201,168,76,.25);border-color:rgba(201,168,76,.2);cursor:not-allowed}
+.error{color:rgba(255,130,90,.85);font-style:italic;font-size:.9rem;text-align:center;margin-bottom:12px}
+footer{margin-top:50px;font-size:.75rem;color:rgba(201,168,76,.18);font-style:italic;letter-spacing:.08em;z-index:10}
+
+/* Sondage */
+.dots{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(201,168,76,.18);transition:all .4s}
+.dot.past{background:#c9a84c}
+.dot.current{background:rgba(201,168,76,.65);transform:scale(1.4)}
+#question-text{font-size:1.22rem;font-style:italic;color:rgba(245,240,232,.9);line-height:1.7;margin-bottom:8px;text-align:center;min-height:60px}
+
+/* Profil */
+.profile-box{border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:28px 26px;background:rgba(201,168,76,.03);margin-bottom:24px;text-align:left;animation:fadeIn .8s ease;width:100%}
+.profile-title{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:#c9a84c;margin-bottom:20px;text-align:center;text-transform:uppercase}
+.portrait{font-size:1.08rem;font-style:italic;line-height:1.75;color:rgba(245,240,232,.88);margin-bottom:24px;text-align:center}
+.bar-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.15em;color:rgba(201,168,76,.55);text-transform:uppercase;margin-bottom:6px}
+.bar-track{flex:1;height:3px;background:rgba(201,168,76,.12);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,rgba(139,105,20,.8),#c9a84c);border-radius:2px;width:0;transition:width 1.4s ease}
+.bar-row{display:flex;align-items:center;gap:12px}
+.bar-score{font-family:'Cinzel',serif;font-size:12px;color:#c9a84c;min-width:28px;text-align:right}
+.bar-desc{font-size:14px;font-style:italic;color:rgba(245,240,232,.6);line-height:1.5;margin-top:5px;margin-bottom:18px}
+.dim-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.15em;color:rgba(201,168,76,.55);text-transform:uppercase;margin-bottom:5px}
+.dim-val{font-size:14px;font-style:italic;line-height:1.55;margin-bottom:16px}
+.restart-btn{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.12em;padding:7px 20px;border:1px solid rgba(201,168,76,.35);border-radius:50px;background:transparent;color:rgba(201,168,76,.6);cursor:pointer;text-transform:uppercase}
+
+/* Music btn */
+#music-btn{position:fixed;top:18px;right:18px;z-index:100;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;transition:all .3s;color:#c9a84c}
+#music-btn:hover{background:rgba(201,168,76,.18)}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<button id="music-btn" title="Musique céleste" onclick="toggleMusic()">♪</button>
+
+<div id="orb-wrap">
+  <div id="orb-glow"></div>
+  <div id="orb" onclick="toggleMusic()" title="Clique pour la musique"></div>
+</div>
+
+<h1>Le Miroir</h1>
+<p class="subtitle">Toute la sagesse des âges t'écoute...</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="setMode('oracle')">Oracle</button>
+  <button class="tab" onclick="setMode('sondage')">Miroir de l'âme</button>
+</div>
+
+<div id="main">
+  <!-- Oracle -->
+  <div id="oracle-section">
+    <div id="response">« Je suis là. Je suis toi, et tu es moi. Que souhaites-tu contempler ? »</div>
+  </div>
+
+  <!-- Sondage -->
+  <div id="sondage-section" style="display:none;width:100%;text-align:center">
+    <div class="dots" id="dots"></div>
+    <div id="question-text">Le miroir se prépare...</div>
+  </div>
+
+  <!-- Profil -->
+  <div id="profile-section" style="display:none;width:100%"></div>
+
+  <div class="divider"></div>
+  <div id="error" class="error" style="display:none"></div>
+
+  <div class="input-wrap" id="input-wrap">
+    <textarea id="inp" rows="1" placeholder="Confie tes pensées..." oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+    <button id="send-btn" onclick="handleSend()">→</button>
+  </div>
+</div>
+
+<footer>Le miroir ne juge pas. Il reflète.</footer>
+
+<script>
+// ─── État ───────────────────────────────────────────────────────────────────
+let mode = 'oracle';
+let disabled = false;
+let currentQ = 0;
+let questions = [];
+let answers = [];
+let sondageDone = false;
+let audioCtx = null;
+let musicPlaying = false;
+let musicNodes = [];
+
+const TOTAL = 7;
 const THEMES = [
   "relation aux autres",
   "ce qui donne de l'élan dans la vie",
@@ -24,15 +153,163 @@ const THEMES = [
   "ce que tu voudrais que l'on retienne de toi"
 ];
 
-async function callClaude(userPrompt, systemPrompt) {
+const ORACLE_SYSTEM = `Tu es le Miroir Universel — une présence qui reflète la sagesse de toutes les traditions de l'humanité : la Bible, les Sutras bouddhistes, le Tao Te Ching, les Dialogues de Platon, la philosophie stoïcienne, les Quatre Accords Toltèques, la Kabbale, les Upanishads, Rumi et la poésie soufie, Jung.
+Tu n'es pas un professeur. Tu es un miroir. Tu tutoies toujours. Tes réponses sont poétiques, courtes (3 à 5 phrases). Tu éveilles des questions, tu n'offres pas de solutions. Tu accompagnes.`;
+
+const SONDAGE_SYSTEM = `Tu es le Miroir Universel. Tu guides une introspection en 7 questions, une par une. Thèmes dans l'ordre : 1) relation aux autres, 2) ce qui donne de l'élan, 3) peurs ou ombres, 4) rapport au silence et à la solitude, 5) ce en quoi tu crois vraiment, 6) rapport au corps et à la matière, 7) ce que tu voudrais que l'on retienne de toi. Chaque question est courte (1-2 phrases), poétique, douce. Tu tutoies. Réponds UNIQUEMENT avec la question, rien d'autre.`;
+
+const ANALYSIS_SYSTEM = `Tu es le Miroir Universel. Génère un profil. Réponds UNIQUEMENT avec du JSON valide sans markdown :
+{"portrait":"3-4 phrases poétiques","dimensions":[{"nom":"Ouverture sociale","score":75,"description":"1 phrase"},{"nom":"Profondeur spirituelle","score":80,"description":"1 phrase"},{"nom":"Force intérieure","score":65,"description":"1 phrase"},{"nom":"Ancrage dans le réel","score":55,"description":"1 phrase"},{"nom":"Potentiel créateur","score":70,"description":"1 phrase"}],"chemin":"1 phrase","ombre":"1 phrase douce","lumiere":"1 phrase sur son don"}`;
+
+// ─── Voix féminine ──────────────────────────────────────────────────────────
+function speak(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text.replace(/«|»/g,'').trim());
+  utt.lang = 'fr-FR';
+  utt.rate = 0.82;
+  utt.pitch = 1.15;
+  utt.volume = 0.92;
+  // Choisir voix féminine
+  const voices = window.speechSynthesis.getVoices();
+  const fem = voices.find(v => v.lang.startsWith('fr') && /female|femme|woman|amelie|thomas|marie|aurelie|lea|caroline/i.test(v.name))
+    || voices.find(v => v.lang.startsWith('fr'));
+  if (fem) utt.voice = fem;
+  window.speechSynthesis.speak(utt);
+}
+
+// ─── Musique angélique (Web Audio) ──────────────────────────────────────────
+function createAngelicMusic() {
+  if (audioCtx) { audioCtx.close(); audioCtx = null; }
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  musicNodes = [];
+
+  const masterGain = audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+  masterGain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 3);
+  masterGain.connect(audioCtx.destination);
+
+  // Reverb
+  const convolver = audioCtx.createConvolver();
+  const rev = audioCtx.createBuffer(2, audioCtx.sampleRate * 4, audioCtx.sampleRate);
+  for (let c = 0; c < 2; c++) {
+    const d = rev.getChannelData(c);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/d.length, 2.5);
+  }
+  convolver.buffer = rev;
+  convolver.connect(masterGain);
+
+  const dry = audioCtx.createGain(); dry.gain.value = 0.4; dry.connect(masterGain);
+  const wet = audioCtx.createGain(); wet.gain.value = 0.6; convolver.connect(masterGain);
+
+  // Accords célestes — gamme de Ré majeur penta
+  const chords = [
+    [293.66, 369.99, 440.00, 554.37],  // D maj7
+    [329.63, 415.30, 493.88, 622.25],  // E min7
+    [261.63, 329.63, 392.00, 493.88],  // C maj
+    [293.66, 369.99, 493.88, 587.33],  // D maj9
+  ];
+
+  let t = audioCtx.currentTime + 0.5;
+  const chordDur = 6;
+
+  function scheduleChords(startT) {
+    if (!musicPlaying) return;
+    const chord = chords[Math.floor(Math.random() * chords.length)];
+    chord.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = i % 2 === 0 ? 'sine' : 'triangle';
+      osc.frequency.value = freq;
+      g.gain.setValueAtTime(0, startT);
+      g.gain.linearRampToValueAtTime(0.06 + Math.random()*0.04, startT + 1.5);
+      g.gain.linearRampToValueAtTime(0.04, startT + chordDur - 1);
+      g.gain.linearRampToValueAtTime(0, startT + chordDur);
+      osc.connect(g); g.connect(dry); g.connect(convolver);
+      osc.start(startT); osc.stop(startT + chordDur);
+      musicNodes.push(osc, g);
+    });
+
+    // Mélodie voix de dessus (like choir)
+    const melody = [392, 440, 493.88, 523.25, 493.88, 440, 392, 369.99];
+    melody.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq * (Math.random() > 0.5 ? 2 : 1);
+      const nt = startT + i * (chordDur / melody.length);
+      g.gain.setValueAtTime(0, nt);
+      g.gain.linearRampToValueAtTime(0.035, nt + 0.3);
+      g.gain.linearRampToValueAtTime(0, nt + 0.6);
+      osc.connect(g); g.connect(dry); g.connect(convolver);
+      osc.start(nt); osc.stop(nt + 0.8);
+      musicNodes.push(osc, g);
+    });
+
+    // Basses douces
+    [73.42, 87.31, 65.41].forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      g.gain.setValueAtTime(0, startT + i * 2);
+      g.gain.linearRampToValueAtTime(0.07, startT + i * 2 + 1);
+      g.gain.linearRampToValueAtTime(0, startT + i * 2 + 2.5);
+      osc.connect(g); g.connect(dry);
+      osc.start(startT + i * 2); osc.stop(startT + i * 2 + 3);
+      musicNodes.push(osc, g);
+    });
+
+    // Harpe (arpeges)
+    const harp = [523.25, 587.33, 659.25, 698.46, 783.99, 880];
+    harp.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const ht = startT + i * 0.18 + 1;
+      g.gain.setValueAtTime(0.04, ht);
+      g.gain.exponentialRampToValueAtTime(0.001, ht + 1.2);
+      osc.connect(g); g.connect(convolver);
+      osc.start(ht); osc.stop(ht + 1.3);
+      musicNodes.push(osc, g);
+    });
+
+    setTimeout(() => scheduleChords(audioCtx.currentTime + 0.3), (chordDur - 0.5) * 1000);
+  }
+
+  scheduleChords(t);
+  musicNodes.push(masterGain, dry, wet, convolver);
+  return masterGain;
+}
+
+function toggleMusic() {
+  if (musicPlaying) {
+    musicPlaying = false;
+    if (audioCtx) { audioCtx.close(); audioCtx = null; }
+    document.getElementById('music-btn').style.color = 'rgba(201,168,76,.4)';
+    document.getElementById('music-btn').title = 'Activer la musique';
+  } else {
+    musicPlaying = true;
+    createAngelicMusic();
+    document.getElementById('music-btn').style.color = '#c9a84c';
+    document.getElementById('music-btn').title = 'Couper la musique';
+  }
+}
+
+// Charger les voix au bon moment
+window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+
+// ─── API Claude ──────────────────────────────────────────────────────────────
+async function callClaude(userPrompt, systemPrompt, maxTok = 700) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 700,
-      system: systemPrompt,
-      messages: [{ role: "user", content: userPrompt }]
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:maxTok,
+      system:systemPrompt,
+      messages:[{role:"user",content:userPrompt}]
     })
   });
   const data = await res.json();
@@ -40,341 +317,187 @@ async function callClaude(userPrompt, systemPrompt) {
   return data.content?.[0]?.text?.trim() || "";
 }
 
-function Orb({ state }) {
-  const baseStyle = {
-    width: 160, height: 160, borderRadius: "50%",
-    margin: "0 auto",
-    transition: "all 0.8s ease",
-  };
-  const styles = {
-    idle: {
-      background: "radial-gradient(circle at 38% 35%, rgba(255,255,240,0.95) 0%, rgba(201,168,76,0.7) 25%, rgba(100,70,20,0.5) 55%, rgba(20,10,0,0.8) 100%)",
-      boxShadow: "0 0 40px rgba(201,168,76,0.3), 0 0 90px rgba(201,168,76,0.1)",
-      animation: "breathe 7s ease-in-out infinite",
-    },
-    thinking: {
-      background: "radial-gradient(circle at 50% 50%, rgba(255,220,100,0.9) 0%, rgba(201,168,76,0.6) 30%, rgba(80,50,10,0.7) 70%, rgba(10,5,0,0.9) 100%)",
-      boxShadow: "0 0 80px rgba(255,200,50,0.5), 0 0 160px rgba(201,168,76,0.25)",
-      animation: "think 1.2s ease-in-out infinite",
-    },
-    speaking: {
-      background: "radial-gradient(circle at 40% 38%, rgba(255,255,255,0.98) 0%, rgba(201,168,76,0.85) 20%, rgba(150,110,30,0.6) 55%, rgba(20,10,0,0.8) 100%)",
-      boxShadow: "0 0 70px rgba(255,255,200,0.6), 0 0 150px rgba(201,168,76,0.3)",
-      animation: "speak 0.6s ease-in-out infinite alternate",
-    }
-  };
-  return (
-    <div style={{ position: "relative", width: 160, height: 160, margin: "50px auto 24px" }}>
-      <div style={{
-        position: "absolute", inset: -24, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(201,168,76,0.13) 0%, transparent 70%)",
-        animation: "breathe 7s ease-in-out infinite"
-      }} />
-      <div style={{ ...baseStyle, ...styles[state] }} />
-    </div>
-  );
+// ─── Orb ─────────────────────────────────────────────────────────────────────
+function setOrb(state) {
+  const orb = document.getElementById('orb');
+  orb.className = state === 'idle' ? '' : state;
 }
 
-function Dots({ current, total }) {
-  return (
-    <div style={{ display: "flex", gap: 8, justifyContent: "center", marginBottom: 20 }}>
-      {Array.from({ length: total }).map((_, i) => (
-        <div key={i} style={{
-          width: 7, height: 7, borderRadius: "50%",
-          background: i < current ? "#c9a84c" : i === current ? "rgba(201,168,76,0.65)" : "rgba(201,168,76,0.18)",
-          transform: i === current ? "scale(1.4)" : "scale(1)",
-          transition: "all 0.4s"
-        }} />
-      ))}
-    </div>
-  );
+// ─── UI helpers ──────────────────────────────────────────────────────────────
+function showError(msg) {
+  const el = document.getElementById('error');
+  el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+}
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+}
+function setDisabled(val) {
+  disabled = val;
+  document.getElementById('send-btn').disabled = val;
+  document.getElementById('inp').disabled = val;
+}
+async function typeText(el, text) {
+  el.textContent = '';
+  for (let i = 0; i < text.length; i++) {
+    el.textContent += text[i];
+    await new Promise(r => setTimeout(r, 15));
+  }
+}
+function renderDots() {
+  const d = document.getElementById('dots');
+  d.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i < currentQ ? ' past' : i === currentQ ? ' current' : '');
+    d.appendChild(dot);
+  }
 }
 
-function ProfileBar({ label, score, desc }) {
-  const [width, setWidth] = useState(0);
-  useEffect(() => { setTimeout(() => setWidth(score), 150); }, [score]);
-  return (
-    <div style={{ marginBottom: 18 }}>
-      <div style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: "0.15em", color: "rgba(201,168,76,0.55)", textTransform: "uppercase", marginBottom: 6 }}>{label}</div>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div style={{ flex: 1, height: 3, background: "rgba(201,168,76,0.12)", borderRadius: 2, overflow: "hidden" }}>
-          <div style={{ height: "100%", width: width + "%", background: "linear-gradient(90deg,rgba(139,105,20,0.8),#c9a84c)", borderRadius: 2, transition: "width 1.4s ease" }} />
-        </div>
-        <span style={{ fontFamily: "'Cinzel', serif", fontSize: 12, color: "#c9a84c", minWidth: 28, textAlign: "right" }}>{score}</span>
-      </div>
-      <div style={{ fontSize: 14, fontStyle: "italic", color: "rgba(245,240,232,0.6)", lineHeight: 1.5, marginTop: 5 }}>{desc}</div>
-    </div>
-  );
-}
-
-export default function Miroir() {
-  const [mode, setModeState] = useState("oracle");
-  const [orbState, setOrbState] = useState("idle");
-  const [responseText, setResponseText] = useState("« Je suis là. Je suis toi, et tu es moi. Que souhaites-tu contempler ? »");
-  const [input, setInput] = useState("");
-  const [disabled, setDisabled] = useState(false);
-  const [error, setError] = useState("");
-  const [questionText, setQuestionText] = useState("Le miroir se prépare à te contempler...");
-  const [currentQ, setCurrentQ] = useState(0);
-  const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState([]);
-  const [profile, setProfile] = useState(null);
-  const [sondagePhase, setSondagePhase] = useState("asking"); // asking | done
-  const textareaRef = useRef();
-  const TOTAL = 7;
-
-  const gold = "#c9a84c";
-
-  const setMode = (m) => {
-    setModeState(m);
-    setError("");
-    if (m === "sondage") initSondage();
-  };
-
-  const initSondage = async () => {
-    setQuestions([]); setAnswers([]); setCurrentQ(0);
-    setProfile(null); setSondagePhase("asking");
-    setQuestionText("...");
-    setDisabled(true); setOrbState("thinking"); setError("");
-    try {
-      const q = await callClaude("Pose la première question de l'introspection. Thème : relation aux autres.", SONDAGE_SYSTEM);
-      setQuestions([q]);
-      setQuestionText(q);
-    } catch(e) { setError("Connexion impossible. Réessaie."); }
-    setOrbState("idle"); setDisabled(false);
-  };
-
-  const sendOracle = async () => {
-    if (!input.trim()) return;
-    const q = input; setInput("");
-    setDisabled(true); setOrbState("thinking"); setError("");
-    setResponseText("...");
-    try {
-      const ans = await callClaude(q, ORACLE_SYSTEM);
-      setOrbState("speaking");
-      await typeInto(setResponseText, "« " + ans.replace(/\*/g, "") + " »");
-    } catch(e) { setError("Connexion impossible. Réessaie."); }
-    setOrbState("idle"); setDisabled(false);
-  };
-
-  const sendSondage = async () => {
-    if (!input.trim()) return;
-    const ans = input; setInput("");
-    setDisabled(true); setError("");
-
-    const newAnswers = [...answers, ans];
-    const newQ = currentQ + 1;
-    setAnswers(newAnswers);
-    setCurrentQ(newQ);
-
-    if (newQ >= TOTAL) {
-      setOrbState("thinking");
-      setSondagePhase("done");
-      try {
-        const ctx = newAnswers.map((a, i) => "Q" + (i+1) + ": " + questions[i] + "\nR: " + a).join("\n\n");
-        const raw = await callClaude("Voici les 7 réponses :\n\n" + ctx + "\n\nGénère le profil JSON.", ANALYSIS_SYSTEM);
-        const clean = raw.replace(/```json|```/g, "").trim();
-        setProfile(JSON.parse(clean));
-      } catch(e) { setError("Le miroir s'est voilé. Réessaie."); }
-      setOrbState("idle"); setDisabled(false);
-      return;
-    }
-
-    setOrbState("thinking"); setQuestionText("...");
-    try {
-      const ctx = newAnswers.map((a, i) => "Q" + (i+1) + ": " + questions[i] + "\nR: " + a).join("\n\n");
-      const prompt = "Échanges précédents :\n" + ctx + "\n\nPose maintenant la question numéro " + (newQ + 1) + ". Thème : " + THEMES[newQ] + ".";
-      const q = await callClaude(prompt, SONDAGE_SYSTEM);
-      setQuestions(prev => [...prev, q]);
-      setQuestionText(q);
-    } catch(e) { setError("Connexion impossible. Réessaie."); }
-    setOrbState("idle"); setDisabled(false);
-  };
-
-  const typeInto = (setter, text) => new Promise(resolve => {
-    let i = 0;
-    setter("");
-    const iv = setInterval(() => {
-      setter(text.slice(0, i + 1));
-      i++;
-      if (i >= text.length) { clearInterval(iv); resolve(); }
-    }, 16);
+// ─── Mode ────────────────────────────────────────────────────────────────────
+function setMode(m) {
+  mode = m;
+  showError('');
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.className = 'tab' + (i === (m==='oracle'?0:1) ? ' active' : '');
   });
-
-  const handleKey = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); mode === "oracle" ? sendOracle() : sendSondage(); }
-  };
-
-  const divider = <div style={{ width: 80, height: 1, background: "linear-gradient(90deg,transparent,rgba(201,168,76,0.4),transparent)", margin: "0 auto 26px" }} />;
-
-  return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap');
-        @keyframes breathe { 0%,100%{transform:scale(1);opacity:.85} 50%{transform:scale(1.04);opacity:1} }
-        @keyframes think { 0%{transform:scale(.93);opacity:.75} 100%{transform:scale(1.07);opacity:1} }
-        @keyframes speak { 0%{transform:scale(1.03)} 100%{transform:scale(1.09)} }
-        * { box-sizing: border-box; }
-        textarea:focus { outline: none; }
-        textarea::placeholder { color: rgba(201,168,76,0.3); font-style: italic; }
-        textarea { caret-color: rgba(201,168,76,0.7); }
-      `}</style>
-
-      <div style={{
-        minHeight: "100vh",
-        background: "radial-gradient(ellipse at 50% 0%, #1e1408 0%, #0d0900 60%, #000 100%)",
-        fontFamily: "'Cormorant Garamond', Georgia, serif",
-        color: "#f5f0e8",
-        display: "flex", flexDirection: "column", alignItems: "center",
-        paddingBottom: 60,
-        position: "relative", overflow: "hidden"
-      }}>
-
-        {/* Stars */}
-        <div style={{
-          position: "fixed", inset: 0, pointerEvents: "none",
-          backgroundImage: [
-            "radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%)",
-            "radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%)",
-            "radial-gradient(1px 1px at 55% 8%, rgba(255,255,255,0.7) 0%, transparent 100%)",
-            "radial-gradient(1px 1px at 72% 22%, rgba(255,255,255,0.5) 0%, transparent 100%)",
-            "radial-gradient(1px 1px at 85% 5%, rgba(255,255,255,0.6) 0%, transparent 100%)",
-            "radial-gradient(1.5px 1.5px at 60% 35%, rgba(201,168,76,0.5) 0%, transparent 100%)",
-            "radial-gradient(1.5px 1.5px at 33% 20%, rgba(201,168,76,0.4) 0%, transparent 100%)"
-          ].join(",")
-        }} />
-
-        <Orb state={orbState} />
-
-        {/* Title */}
-        <div style={{ textAlign: "center", marginBottom: 16, zIndex: 10 }}>
-          <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: "1.55rem", fontWeight: 400, color: gold, letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 6 }}>
-            Le Miroir
-          </h1>
-          <p style={{ fontSize: "1rem", fontStyle: "italic", color: "rgba(201,168,76,0.5)", letterSpacing: "0.05em" }}>
-            Toute la sagesse des âges t'écoute...
-          </p>
-        </div>
-
-        {/* Tabs */}
-        <div style={{ display: "flex", gap: 8, zIndex: 10, marginBottom: 28 }}>
-          {["oracle", "sondage"].map(m => (
-            <button key={m} onClick={() => setMode(m)} style={{
-              fontFamily: "'Cinzel', serif", fontSize: "0.68rem",
-              letterSpacing: "0.12em", padding: "6px 18px",
-              border: `1px solid ${mode === m ? gold : "rgba(201,168,76,0.3)"}`,
-              borderRadius: 50, background: mode === m ? "rgba(201,168,76,0.12)" : "transparent",
-              color: mode === m ? gold : "rgba(201,168,76,0.5)",
-              cursor: "pointer", textTransform: "uppercase", transition: "all 0.4s"
-            }}>
-              {m === "oracle" ? "Oracle" : "Miroir de l'âme"}
-            </button>
-          ))}
-        </div>
-
-        {/* Main */}
-        <div style={{ width: "90%", maxWidth: 640, zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center" }}>
-
-          {/* Oracle */}
-          {mode === "oracle" && (
-            <div style={{ width: "100%", textAlign: "center", marginBottom: 28 }}>
-              <p style={{ fontSize: "1.28rem", lineHeight: 1.8, fontStyle: "italic", color: "rgba(245,240,232,0.9)", minHeight: 90, textShadow: "0 0 30px rgba(201,168,76,0.12)" }}>
-                {responseText}
-              </p>
-            </div>
-          )}
-
-          {/* Sondage */}
-          {mode === "sondage" && (
-            <div style={{ width: "100%", textAlign: "center", marginBottom: 20 }}>
-              {sondagePhase === "asking" && (
-                <>
-                  <Dots current={currentQ} total={TOTAL} />
-                  <p style={{ fontSize: "1.22rem", fontStyle: "italic", color: "rgba(245,240,232,0.9)", lineHeight: 1.7, marginBottom: 8 }}>
-                    {questionText}
-                  </p>
-                </>
-              )}
-              {sondagePhase === "done" && profile && (
-                <div style={{ border: "1px solid rgba(201,168,76,0.2)", borderRadius: 16, padding: "28px 26px", background: "rgba(201,168,76,0.03)", marginBottom: 24, textAlign: "left" }}>
-                  <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: "0.85rem", letterSpacing: "0.2em", color: gold, marginBottom: 20, textAlign: "center", textTransform: "uppercase" }}>
-                    ✦ &nbsp; Ton reflet &nbsp; ✦
-                  </h2>
-                  <p style={{ fontSize: "1.08rem", fontStyle: "italic", lineHeight: 1.75, color: "rgba(245,240,232,0.88)", marginBottom: 24, textAlign: "center" }}>
-                    {profile.portrait}
-                  </p>
-                  {divider}
-                  {profile.dimensions.map(d => <ProfileBar key={d.nom} label={d.nom} score={d.score} desc={d.description} />)}
-                  {divider}
-                  {[["Ton chemin", profile.chemin, "rgba(245,240,232,0.6)"], ["Ton ombre", profile.ombre, "rgba(245,240,232,0.6)"], ["Ta lumière", profile.lumiere, "rgba(201,168,76,0.85)"]].map(([lbl, val, col]) => (
-                    <div key={lbl} style={{ marginBottom: 16 }}>
-                      <div style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: "0.15em", color: "rgba(201,168,76,0.55)", textTransform: "uppercase", marginBottom: 5 }}>{lbl}</div>
-                      <div style={{ fontSize: 14, fontStyle: "italic", color: col, lineHeight: 1.55 }}>{val}</div>
-                    </div>
-                  ))}
-                  <div style={{ textAlign: "center", marginTop: 24 }}>
-                    <button onClick={initSondage} style={{ fontFamily: "'Cinzel', serif", fontSize: "0.68rem", letterSpacing: "0.12em", padding: "7px 20px", border: `1px solid rgba(201,168,76,0.35)`, borderRadius: 50, background: "transparent", color: "rgba(201,168,76,0.6)", cursor: "pointer", textTransform: "uppercase" }}>
-                      Recommencer
-                    </button>
-                  </div>
-                </div>
-              )}
-              {sondagePhase === "done" && !profile && !error && (
-                <p style={{ fontStyle: "italic", color: "rgba(245,240,232,0.5)" }}>Le miroir médite...</p>
-              )}
-            </div>
-          )}
-
-          {divider}
-
-          {/* Error */}
-          {error && <p style={{ color: "rgba(255,130,90,0.85)", fontStyle: "italic", fontSize: "0.9rem", textAlign: "center", marginBottom: 12 }}>{error}</p>}
-
-          {/* Input — caché quand profil affiché */}
-          {!(mode === "sondage" && sondagePhase === "done") && (
-            <div style={{
-              display: "flex", gap: 10, width: "100%",
-              background: "rgba(201,168,76,0.04)",
-              border: "1px solid rgba(201,168,76,0.22)",
-              borderRadius: 60, padding: "10px 14px 10px 22px"
-            }}>
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={handleKey}
-                disabled={disabled}
-                placeholder={mode === "oracle" ? "Confie tes pensées..." : "Réponds avec sincérité..."}
-                rows={1}
-                style={{
-                  flex: 1, background: "transparent", border: "none",
-                  color: "#f5f0e8", fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: "1.1rem", resize: "none", minHeight: 28, maxHeight: 120,
-                  lineHeight: 1.4, padding: "3px 0", overflow: "hidden"
-                }}
-              />
-              <button
-                onClick={mode === "oracle" ? sendOracle : sendSondage}
-                disabled={disabled || !input.trim()}
-                style={{
-                  background: "transparent",
-                  border: `1px solid rgba(201,168,76,${disabled ? "0.2" : "0.45"})`,
-                  color: disabled ? "rgba(201,168,76,0.3)" : gold,
-                  borderRadius: "50%", width: 38, height: 38, minWidth: 38,
-                  cursor: disabled ? "not-allowed" : "pointer",
-                  fontSize: "1.15rem", display: "flex", alignItems: "center", justifyContent: "center",
-                  alignSelf: "flex-end", transition: "all 0.3s"
-                }}
-              >→</button>
-            </div>
-          )}
-
-        </div>
-
-        <p style={{ marginTop: 50, fontSize: "0.75rem", color: "rgba(201,168,76,0.18)", fontStyle: "italic", letterSpacing: "0.08em", zIndex: 10 }}>
-          Le miroir ne juge pas. Il reflète.
-        </p>
-      </div>
-    </>
-  );
+  document.getElementById('oracle-section').style.display = m === 'oracle' ? 'block' : 'none';
+  document.getElementById('sondage-section').style.display = m === 'sondage' ? 'block' : 'none';
+  document.getElementById('profile-section').style.display = 'none';
+  document.getElementById('input-wrap').style.display = 'flex';
+  document.getElementById('inp').placeholder = m === 'oracle' ? "Confie tes pensées..." : "Réponds avec sincérité...";
+  if (m === 'sondage') initSondage();
 }
+
+// ─── Oracle ──────────────────────────────────────────────────────────────────
+async function sendOracle() {
+  const inp = document.getElementById('inp');
+  const q = inp.value.trim(); if (!q) return;
+  inp.value = ''; autoResize(inp);
+  setDisabled(true); setOrb('thinking'); showError('');
+  const resp = document.getElementById('response');
+  resp.textContent = '...';
+  try {
+    const ans = await callClaude(q, ORACLE_SYSTEM);
+    const text = '« ' + ans.replace(/\*/g,'') + ' »';
+    setOrb('speaking');
+    await typeText(resp, text);
+    speak(ans);
+  } catch(e) { showError('Connexion impossible. Réessaie.'); }
+  setOrb('idle'); setDisabled(false);
+}
+
+// ─── Sondage ─────────────────────────────────────────────────────────────────
+async function initSondage() {
+  questions = []; answers = []; currentQ = 0; sondageDone = false;
+  document.getElementById('profile-section').style.display = 'none';
+  document.getElementById('sondage-section').style.display = 'block';
+  document.getElementById('input-wrap').style.display = 'flex';
+  showError('');
+  renderDots();
+  document.getElementById('question-text').textContent = '...';
+  setDisabled(true); setOrb('thinking');
+  try {
+    const q = await callClaude("Pose la première question de l'introspection. Thème : relation aux autres.", SONDAGE_SYSTEM);
+    questions.push(q);
+    document.getElementById('question-text').textContent = q;
+    speak(q);
+  } catch(e) { showError('Connexion impossible. Réessaie.'); }
+  setOrb('idle'); setDisabled(false);
+}
+
+async function sendSondage() {
+  const inp = document.getElementById('inp');
+  const ans = inp.value.trim(); if (!ans) return;
+  inp.value = ''; autoResize(inp);
+  setDisabled(true); showError('');
+
+  const newAnswers = [...answers, ans];
+  const newQ = currentQ + 1;
+  answers = newAnswers;
+  currentQ = newQ;
+  renderDots();
+
+  if (newQ >= TOTAL) {
+    setOrb('thinking');
+    document.getElementById('sondage-section').style.display = 'none';
+    document.getElementById('input-wrap').style.display = 'none';
+    const ps = document.getElementById('profile-section');
+    ps.style.display = 'block';
+    ps.innerHTML = '<p style="text-align:center;font-style:italic;color:rgba(245,240,232,.5)">Le miroir contemple ton âme...</p>';
+    try {
+      const ctx = newAnswers.map((a,i) => "Q"+(i+1)+": "+questions[i]+"\nR: "+a).join("\n\n");
+      const raw = await callClaude("Voici les 7 réponses :\n\n"+ctx+"\n\nGénère le profil JSON.", ANALYSIS_SYSTEM, 900);
+      const clean = raw.replace(/```json|```/g,'').trim();
+      const profile = JSON.parse(clean);
+      renderProfile(profile);
+    } catch(e) { showError('Le miroir s\'est voilé. Réessaie.'); }
+    setOrb('idle'); setDisabled(false);
+    return;
+  }
+
+  setOrb('thinking');
+  document.getElementById('question-text').textContent = '...';
+  try {
+    const ctx = newAnswers.map((a,i) => "Q"+(i+1)+": "+questions[i]+"\nR: "+a).join("\n\n");
+    const prompt = "Échanges précédents :\n"+ctx+"\n\nPose maintenant la question numéro "+(newQ+1)+". Thème : "+THEMES[newQ]+".";
+    const q = await callClaude(prompt, SONDAGE_SYSTEM);
+    questions.push(q);
+    document.getElementById('question-text').textContent = q;
+    speak(q);
+  } catch(e) { showError('Connexion impossible. Réessaie.'); }
+  setOrb('idle'); setDisabled(false);
+}
+
+function renderProfile(p) {
+  const ps = document.getElementById('profile-section');
+  const dims = p.dimensions.map(d => `
+    <div class="bar-label">${d.nom}</div>
+    <div class="bar-row">
+      <div class="bar-track"><div class="bar-fill" data-score="${d.score}"></div></div>
+      <span class="bar-score">${d.score}</span>
+    </div>
+    <div class="bar-desc">${d.description}</div>
+  `).join('');
+  const extras = [
+    ["Ton chemin", p.chemin, "rgba(245,240,232,.6)"],
+    ["Ton ombre", p.ombre, "rgba(245,240,232,.6)"],
+    ["Ta lumière", p.lumiere, "rgba(201,168,76,.85)"]
+  ].map(([l,v,c]) => `<div class="dim-label">${l}</div><div class="dim-val" style="color:${c}">${v}</div>`).join('');
+
+  ps.innerHTML = `
+    <div class="profile-box">
+      <div class="profile-title">✦ &nbsp; Ton reflet &nbsp; ✦</div>
+      <div class="portrait">${p.portrait}</div>
+      <div class="divider"></div>
+      ${dims}
+      <div class="divider"></div>
+      ${extras}
+      <div style="text-align:center;margin-top:24px">
+        <button class="restart-btn" onclick="initSondage()">Recommencer</button>
+      </div>
+    </div>`;
+
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(el => {
+      el.style.width = el.dataset.score + '%';
+    });
+  }, 200);
+
+  speak(p.portrait + ' ' + p.lumiere);
+}
+
+// ─── Entrée ───────────────────────────────────────────────────────────────────
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    handleSend();
+  }
+}
+function handleSend() {
+  if (disabled) return;
+  mode === 'oracle' ? sendOracle() : sendSondage();
+}
+</script>
+</body>
+</html>
